@@ -14,6 +14,10 @@
 
                     return true;
                 }
+                else
+                {
+                    Console.WriteLine($"Either file '{sourceFilePath}' was not found or config file path '{destinationFilePath}' is invalid.");
+                }
             }
             catch (Exception ex)
             {
