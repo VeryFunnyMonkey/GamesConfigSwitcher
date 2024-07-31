@@ -174,6 +174,7 @@
             ConfigPathLabel.Size = new Size(104, 15);
             ConfigPathLabel.TabIndex = 12;
             ConfigPathLabel.Text = "Game Config Path";
+            ConfigPathLabel.Visible = false;
             // 
             // profile1Label
             // 
@@ -183,6 +184,7 @@
             profile1Label.Size = new Size(50, 15);
             profile1Label.TabIndex = 13;
             profile1Label.Text = "Profile 1";
+            profile1Label.Visible = false;
             // 
             // profile2Label
             // 
@@ -192,6 +194,7 @@
             profile2Label.Size = new Size(50, 15);
             profile2Label.TabIndex = 14;
             profile2Label.Text = "Profile 2";
+            profile2Label.Visible = false;
             // 
             // Form1
             // 

@@ -100,12 +100,15 @@ namespace GCS.UI
 
             gameConfigPath.Visible = true;
             gameConfigButton.Visible = true;
+            ConfigPathLabel.Visible = true;
             profile1.Visible = true;
             profile1Button.Visible = true;
             profile1UseButton.Visible = true;
+            profile1Label.Visible = true;
             profile2.Visible = true;
             profile2Button.Visible = true;
             profile2UseButton.Visible = true;
+            profile2Label.Visible = true;
             saveButton.Visible = true;
         }
 
