@@ -1,5 +1,6 @@
 ﻿using GCS.Core;
 using GCS.UI;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GCS.CLI
 {
@@ -23,7 +24,7 @@ namespace GCS.CLI
                     break;
 
                 case "add":
-                    if (args.Length < 4)
+                    if (args.Length < 5)
                     {
                         Console.WriteLine("Usage: add <GameTitle> <ConfigPath> <Profile1Path> <Profile2Path>");
                     }
@@ -72,8 +73,7 @@ namespace GCS.CLI
 
                             if (profilePath != null)
                             { 
-                                Console.WriteLine(configPath + " " + profilePath);
-                                useProfile(configPath, profilePath);
+                                useProfile(profilePath, configPath);
                             }
                             else
                             {
@@ -110,6 +110,7 @@ namespace GCS.CLI
             Console.WriteLine("Example:");
             Console.WriteLine("  GCS.CLI.exe add \"NewGame\" \"C:\\path\\to\\configfile.txt\" \"C:\\path\\to\\profile1.txt\" \"C:\\path\\to\\profile2.txt\"");
             Console.WriteLine("  GCS.CLI.exe list");
+            Console.WriteLine("  GCS.CLI.exe use \"Elden Ring\" profile1");
         }
 
         private static void ListGames(GameDataManager gameDataManager)
