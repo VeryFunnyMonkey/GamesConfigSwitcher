@@ -9,9 +9,11 @@ public static class CommandLineHandler
 
     public static void Handle(string[] args)
     {
-        if (args.Length == 0)
+        var gameDataManager = new GameDataManager(jsonFilePath);
+
+        if (args.Length == 0 || args[0].ToLower() == "help")
         {
-            Console.WriteLine("No command-line arguments provided.");
+            ShowHelp();
             return;
         }
 
@@ -21,16 +23,17 @@ public static class CommandLineHandler
             case "add":
                 if (args.Length < 4)
                 {
-                    Console.WriteLine("Usage: add <GameTitle> <Profile1Path> <Profile2Path>");
+                    Console.WriteLine("Usage: add <GameTitle> <ConfigPath> <Profile1Path> <Profile2Path>");
                 }
                 else
                 {
-                    AddGame(args[1], args[2], args[3]);
+                    gameDataManager.AddGameData(args[1], args[2], args[3], args[4]);
+                    Console.WriteLine($"Game '{args[1]}' added successfully.");
                 }
                 break;
 
             case "list":
-                ListGames();
+                ListGames(gameDataManager);
                 break;
 
             default:
@@ -39,30 +42,8 @@ public static class CommandLineHandler
         }
     }
 
-    private static void AddGame(string title, string profile1, string profile2)
+    private static void ListGames(GameDataManager gameDataManager)
     {
-        var gameDataManager = new GameDataManager(jsonFilePath);
-        var gameData = gameDataManager.LoadGameData();
-
-        var newGame = new Game
-        {
-            Title = title,
-            Profiles = new Profile
-            {
-                Profile1 = profile1,
-                Profile2 = profile2
-            }
-        };
-
-        gameData.Games.Add(newGame);
-        gameDataManager.SaveGameData(gameData);
-
-        Console.WriteLine($"Game '{title}' added successfully.");
-    }
-
-    private static void ListGames()
-    {
-        var gameDataManager = new GameDataManager(jsonFilePath);
         var gameData = gameDataManager.LoadGameData();
 
         if (gameData.Games != null && gameData.Games.Count > 0)
@@ -70,6 +51,7 @@ public static class CommandLineHandler
             foreach (var game in gameData.Games)
             {
                 Console.WriteLine($"Title: {game.Title}");
+                Console.WriteLine($"  Config Path: {game.configPath}");
                 Console.WriteLine($"  Profile 1: {game.Profiles.Profile1}");
                 Console.WriteLine($"  Profile 2: {game.Profiles.Profile2}");
                 Console.WriteLine();
@@ -79,5 +61,17 @@ public static class CommandLineHandler
         {
             Console.WriteLine("No games found.");
         }
+    }
+
+    private static void ShowHelp()
+    {
+        Console.WriteLine("Available commands:");
+        Console.WriteLine("  help         Shows this help message.");
+        Console.WriteLine("  add          Adds a new game. Usage: add <GameTitle> <ConfigPath> <Profile1Path> <Profile2Path>");
+        Console.WriteLine("  list         Lists all games and their profiles.");
+        Console.WriteLine();
+        Console.WriteLine("Example:");
+        Console.WriteLine("  YourApp.exe add \"NewGame\" \"C:\\path\\to\\configfile.txt\" \"C:\\path\\to\\profile1.txt\" \"C:\\path\\to\\profile2.txt\"");
+        Console.WriteLine("  YourApp.exe list");
     }
 }

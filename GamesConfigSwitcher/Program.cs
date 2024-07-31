@@ -15,10 +15,12 @@ namespace GamesConfigSwitcher
         [STAThread]
         static void Main(string[] args)
         {
-            if (args.Length > 0)
+            AttachConsole(ATTACH_PARENT_PROCESS);
+            if (args.Length == 0)
             {
-                AttachConsole(ATTACH_PARENT_PROCESS);
                 RunCommandLine(args);
+                //System.Windows.Forms.SendKeys.SendWait("{ENTER}");
+                Application.Exit();
             }
 
             else

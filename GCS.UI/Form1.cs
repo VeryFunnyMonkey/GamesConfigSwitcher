@@ -1,4 +1,6 @@
-namespace GamesConfigSwitcher
+using GCS.Core;
+
+namespace GCS.UI
 {
     public partial class Form1 : Form
     {
@@ -77,7 +79,7 @@ namespace GamesConfigSwitcher
             }
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void gamePicker_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Get the selected game title
             string selectedGameTitle = gamePicker.SelectedItem?.ToString();
@@ -171,6 +173,16 @@ namespace GamesConfigSwitcher
         private void saveButton_Click(object sender, EventArgs e)
         {
             SaveChanges();
+        }
+
+        private void addGameButton_Click(object sender, EventArgs e)
+        {
+            using (var addGameForm = new AddGameForm(gameDataManager))
+            {
+                addGameForm.ShowDialog();
+                // Optionally, refresh the games list or combo box after adding a new game
+                PopulateGamePicker();
+            }
         }
     }
 }
