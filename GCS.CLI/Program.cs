@@ -1,6 +1,5 @@
 ﻿using GCS.Core;
 using GCS.UI;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GCS.CLI
 {
@@ -54,39 +53,48 @@ namespace GCS.CLI
 
                         var gameData = gameDataManager.LoadGameData();
 
-                        var selectedGame = gameData.Games.FirstOrDefault(g => g.Title == args[1]);
-
-                        string profilePath = null;
-
-                        if (selectedGame != null)
+                        if (gameData.Games != null && gameData.Games.Count > 0)
                         {
-                            string configPath = selectedGame.configPath;
+                            var selectedGame = gameData.Games.FirstOrDefault(g => g.Title == args[1]);
 
-                            if (args[2].ToLower() == "profile1")
+                            string profilePath = null;
+
+                            if (selectedGame != null)
                             {
-                                profilePath = selectedGame.Profiles.Profile1;
-                            }
-                            if (args[2].ToLower() == "profile2")
-                            {
-                                profilePath = selectedGame.Profiles.Profile2;
+                                string configPath = selectedGame.configPath;
+
+                                if (args[2].ToLower() == "profile1")
+                                {
+                                    profilePath = selectedGame.Profiles.Profile1;
+                                }
+                                if (args[2].ToLower() == "profile2")
+                                {
+                                    profilePath = selectedGame.Profiles.Profile2;
+                                }
+
+                                if (profilePath != null)
+                                {
+                                    useProfile(profilePath, configPath);
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Profile not found.");
+                                }
+                                break;
                             }
 
-                            if (profilePath != null)
-                            { 
-                                useProfile(profilePath, configPath);
-                            }
                             else
                             {
-                                Console.WriteLine("Profile not found.");
+                                Console.WriteLine("The selected game could not be found.");
                             }
                             break;
                         }
-
                         else
                         {
-                            Console.WriteLine("The selected game could not be found.");
+                            Console.WriteLine("No games found.");
                         }
-                        break;
+
+
                     }
                     break;
 

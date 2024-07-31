@@ -28,7 +28,11 @@ namespace GCS.Core
             }
             else
             {
-                throw new FileNotFoundException($"The JSON file was not found at: {jsonFilePath}");
+                //throw new FileNotFoundException($"The JSON file was not found at: {jsonFilePath}");
+                GameData gameData = new GameData();
+                string json = JsonConvert.SerializeObject(gameData, Formatting.Indented);
+                File.WriteAllText(jsonFilePath, json);
+                return gameData;
             }
         }
 
@@ -54,7 +58,7 @@ namespace GCS.Core
                 gameData.Games = new List<Game>();
             }
 
-            if (gameData.Games.Any(g => g.Title.Equals(title, StringComparison.OrdinalIgnoreCase)))
+            if (gameData.Games != null && gameData.Games.Any(g => g.Title.Equals(title, StringComparison.OrdinalIgnoreCase)))
             {
                 Console.WriteLine($"A game with the title '{title}' already exists.");
                 return;

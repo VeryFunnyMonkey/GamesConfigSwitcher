@@ -3,11 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GCS.CLI", "GCS.CLI\GCS.CLI.csproj", "{6851E86E-D41B-4255-9A4B-C74D64D5D726}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GCS.CLI", "GCS.CLI\GCS.CLI.csproj", "{6851E86E-D41B-4255-9A4B-C74D64D5D726}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GCS.UI", "GCS.UI\GCS.UI.csproj", "{BF406B4A-4D1E-4BEA-9BE3-992C1A5146AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GCS.UI", "GCS.UI\GCS.UI.csproj", "{BF406B4A-4D1E-4BEA-9BE3-992C1A5146AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GCS.Core", "GCS.Core\GCS.Core.csproj", "{536B15F3-CC31-4D91-83D6-56ED15E99309}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GCS.Core", "GCS.Core\GCS.Core.csproj", "{536B15F3-CC31-4D91-83D6-56ED15E99309}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{51069BFA-CB1D-49D8-A614-24EB26A25599}"
+	ProjectSection(SolutionItems) = preProject
+		gameData.json = gameData.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E038A365-6DAD-4A8B-B3C0-4503B0C8D639}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
