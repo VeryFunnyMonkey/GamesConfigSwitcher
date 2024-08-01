@@ -217,7 +217,7 @@
             Controls.Add(gameConfigPath);
             Controls.Add(gamePicker);
             Name = "Form1";
-            Text = "Form1";
+            Text = "Games Config Switcher";
             ResumeLayout(false);
             PerformLayout();
         }
