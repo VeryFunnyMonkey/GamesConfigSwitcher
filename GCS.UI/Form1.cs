@@ -6,6 +6,7 @@ namespace GCS.UI
     {
         private GameDataManager gameDataManager;
         private GameData gameData;
+        private Dictionary<Label, TextBox> labelTextBoxMap = new Dictionary<Label, TextBox>();
 
         public Form1()
         {
@@ -35,8 +36,123 @@ namespace GCS.UI
             }
         }
 
+        private void gamePicker_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Clear existing profile controls
+            profilesPanel.Controls.Clear();
 
-        private void SaveChanges()
+            // Get the selected game title
+            string selectedGameTitle = gamePicker.SelectedItem?.ToString();
+
+            if (!string.IsNullOrEmpty(selectedGameTitle))
+            {
+                // Find the game with the selected title
+                var game = gameData.Games.FirstOrDefault(g => g.Title == selectedGameTitle);
+
+                if (game != null && game.configPath != null && game.Profiles != null)
+                {
+                    // Update text box with config path
+                    gameConfigPath.Text = game.configPath;
+
+                    // Create controls for each profile
+                    foreach (var profile in game.Profiles)
+                    {
+                        // Create and configure the label for the profile
+                        Label profileLabel = new Label
+                        {
+                            Text = profile.title,
+                            AutoSize = true,
+                            Width = 253,
+                            Padding = new Padding(0, 10, 0, 0) // Add some space below the label
+                        };
+
+                        // Create and configure the text box for the profile path
+                        TextBox profileTextBox = new TextBox
+                        {
+                            Text = profile.profilePath,
+                            ReadOnly = true,
+                            Width = 253
+                        };
+
+                        // Create a panel for buttons to keep them next to each other
+                        FlowLayoutPanel buttonPanel = new FlowLayoutPanel
+                        {
+                            AutoSize = true,
+                            FlowDirection = FlowDirection.LeftToRight,
+                            WrapContents = false,
+                            Padding = new Padding(0)
+                        };
+
+                        // Create and configure the browse button
+                        Button browseButton = new Button
+                        {
+                            Text = "Browse",
+                            Width = 75
+                        };
+                        browseButton.Click += (s, args) =>
+                        {
+                            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                            {
+                                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                                {
+                                    profileTextBox.Text = openFileDialog.FileName;
+                                }
+                            }
+                        };
+
+                        // Create and configure the use button
+                        Button useButton = new Button
+                        {
+                            Text = "Use",
+                            Width = 75
+                        };
+                        useButton.Click += (s, args) =>
+                        {
+                            bool copyFile = FileHelper.profileCopier(profileTextBox.Text, gameConfigPath.Text);
+                            if (copyFile)
+                            {
+                                MessageBox.Show("File copied successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            else
+                            {
+                                MessageBox.Show("An error occurred or invalid paths provided.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        };
+
+                        // Add buttons to buttonPanel
+                        buttonPanel.Controls.Add(browseButton);
+                        buttonPanel.Controls.Add(useButton);
+
+                        // Add profile controls to panel
+                        profilesPanel.Controls.Add(profileLabel);
+                        profilesPanel.Controls.Add(profileTextBox);
+                        profilesPanel.Controls.Add(buttonPanel);
+
+                        labelTextBoxMap[profileLabel] = profileTextBox;
+                    }
+
+                    // Make the config path section visible
+                    gameConfigPath.Visible = true;
+                    gameConfigButton.Visible = true;
+                    ConfigPathLabel.Visible = true;
+                    saveButton.Visible = true;
+                    profileLabel.Visible = true;
+                }
+            }
+        }
+        private void gameConfigButton_Click(object sender, EventArgs e)
+        {
+            TextBox textBox = gameConfigPath;
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    textBox.Text = openFileDialog.FileName;
+                }
+            }
+        }
+
+        private void saveButton_Click(object sender, EventArgs e)
         {
             if (gameData == null || gameData.Games == null)
             {
@@ -44,7 +160,6 @@ namespace GCS.UI
                 return;
             }
 
-            // Get the selected game title
             string selectedGameTitle = gamePicker.SelectedItem?.ToString();
 
             if (string.IsNullOrEmpty(selectedGameTitle))
@@ -53,15 +168,26 @@ namespace GCS.UI
                 return;
             }
 
-            // Find the game with the selected title
             var game = gameData.Games.FirstOrDefault(g => g.Title == selectedGameTitle);
 
             if (game != null && game.Profiles != null)
             {
-                // Update the profiles with text box values
                 game.configPath = gameConfigPath.Text;
-                game.Profiles.Profile1 = profile1.Text;
-                game.Profiles.Profile2 = profile2.Text;
+
+                foreach (var kvp in labelTextBoxMap)
+                {
+                    var profileLabel = kvp.Key;
+                    var profileTextBox = kvp.Value;
+
+                    // Find the corresponding profile by its label text
+                    var profile = game.Profiles.FirstOrDefault(p => p.title == profileLabel.Text);
+                    if (profile != null)
+                    {
+                        // Update the profilePath
+                        profile.profilePath = profileTextBox.Text;
+                    }
+
+                }
 
                 try
                 {
@@ -77,105 +203,6 @@ namespace GCS.UI
             {
                 MessageBox.Show("The selected game could not be found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        private void gamePicker_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // Get the selected game title
-            string selectedGameTitle = gamePicker.SelectedItem?.ToString();
-
-            if (!string.IsNullOrEmpty(selectedGameTitle))
-            {
-                // Find the game with the selected title
-                var game = gameData.Games.FirstOrDefault(g => g.Title == selectedGameTitle);
-
-                if (game != null && game.configPath != null && game.Profiles != null)
-                {
-                    // Update text boxes with config paths and profile paths
-                    gameConfigPath.Text = game.configPath;
-                    profile1.Text = game.Profiles.Profile1;
-                    profile2.Text = game.Profiles.Profile2;
-                }
-            }
-
-            gameConfigPath.Visible = true;
-            gameConfigButton.Visible = true;
-            ConfigPathLabel.Visible = true;
-            profile1.Visible = true;
-            profile1Button.Visible = true;
-            profile1UseButton.Visible = true;
-            profile1Label.Visible = true;
-            profile2.Visible = true;
-            profile2Button.Visible = true;
-            profile2UseButton.Visible = true;
-            profile2Label.Visible = true;
-            saveButton.Visible = true;
-        }
-
-        private void profileButton_Click(object sender, EventArgs e)
-        {
-            Button button = sender as Button;
-            TextBox textBox = null;
-
-            // Determine which button was clicked and set the corresponding TextBox
-            if (button == profile1Button)
-                textBox = profile1;
-            else if (button == profile2Button)
-                textBox = profile2;
-
-            if (textBox != null)
-            {
-                using (OpenFileDialog openFileDialog = new OpenFileDialog())
-                {
-                    if (openFileDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        textBox.Text = openFileDialog.FileName;
-                    }
-                }
-            }
-        }
-
-        private void gameConfigButton_Click(object sender, EventArgs e)
-        {
-            TextBox textBox = gameConfigPath;
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
-            {
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    textBox.Text = openFileDialog.FileName;
-                }
-            }
-        }
-
-        private void profileUseButton_Click(object sender, EventArgs e)
-        {
-            Button button = sender as Button;
-            TextBox textBox = null;
-
-            // Determine which button was clicked and set the corresponding TextBox
-            if (button == profile1UseButton)
-                textBox = profile1;
-            else if (button == profile2UseButton)
-                textBox = profile2;
-
-            if (textBox != null)
-            {
-                bool copyFile = FileHelper.profileCopier(textBox.Text, gameConfigPath.Text);
-
-                if (copyFile)
-                {
-                    MessageBox.Show("File copied successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    MessageBox.Show("An error occurred or invalid paths provided.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
-        private void saveButton_Click(object sender, EventArgs e)
-        {
-            SaveChanges();
         }
 
         private void addGameButton_Click(object sender, EventArgs e)
