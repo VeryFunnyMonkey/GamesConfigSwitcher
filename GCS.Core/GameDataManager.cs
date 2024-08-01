@@ -28,7 +28,6 @@ namespace GCS.Core
             }
             else
             {
-                //throw new FileNotFoundException($"The JSON file was not found at: {jsonFilePath}");
                 GameData gameData = new GameData();
                 string json = JsonConvert.SerializeObject(gameData, Formatting.Indented);
                 File.WriteAllText(jsonFilePath, json);
@@ -64,6 +63,17 @@ namespace GCS.Core
                 return;
             }
 
+            var duplicateProfiles = profiles.GroupBy(p => p.title, StringComparer.OrdinalIgnoreCase)
+                                .Where(g => g.Count() > 1)
+                                .Select(g => g.Key)
+                                .ToList();
+
+            if (duplicateProfiles.Any())
+            {
+                Console.WriteLine($"Duplicate profile titles found: {string.Join(", ", duplicateProfiles)}. Please ensure each profile has a unique title.");
+                return;
+            }
+
             var newGame = new Game
             {
                 Title = title,
@@ -75,5 +85,30 @@ namespace GCS.Core
             SaveGameData(gameData);
             Console.WriteLine($"Game '{title}' added successfully.");
         }
+
+        public void DeleteGameData(string title)
+        {
+            var gameData = LoadGameData();
+
+            if (gameData.Games == null || !gameData.Games.Any())
+            {
+                Console.WriteLine("No games to delete.");
+                return;
+            }
+
+            var gameToRemove = gameData.Games.FirstOrDefault(g => g.Title.Equals(title, StringComparison.OrdinalIgnoreCase));
+
+            if (gameToRemove != null)
+            {
+                gameData.Games.Remove(gameToRemove);
+                SaveGameData(gameData);
+                Console.WriteLine($"Game '{title}' has been deleted successfully.");
+            }
+            else
+            {
+                Console.WriteLine($"Game with the title '{title}' not found.");
+            }
+        }
+
     }
 }

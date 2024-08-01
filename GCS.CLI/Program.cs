@@ -29,14 +29,10 @@ namespace GCS.CLI
                 case "add":
                     if (args.Length < 5 || (args.Length - 2) % 2 != 1)
                     {
-                        Console.WriteLine(args.Length);
-                        Console.WriteLine((args.Length - 2) % 2);
                         Console.WriteLine("Usage: add <GameTitle> <ConfigPath> <ProfileTitle1> <ProfilePath1> [<ProfileTitle2> <ProfilePath2> ...]");
                     }
                     else
                     {
-                        Console.WriteLine(args.Length);
-                        Console.WriteLine((args.Length - 2) % 2);
                         string title = args[1];
                         string configPath = args[2];
                         var profiles = new List<Profile>();
@@ -100,6 +96,17 @@ namespace GCS.CLI
                     }
                     break;
 
+                case "delete":
+                    if (args.Length < 2)
+                    {
+                        Console.WriteLine("Usage: delete <GameTitle>");
+                    }
+                    else
+                    {
+                        gameDataManager.DeleteGameData(args[1]);
+                    }
+                    break;
+
                 default:
                     Console.WriteLine($"Unknown command: {args[0]}");
                     ShowHelp();
@@ -114,11 +121,13 @@ namespace GCS.CLI
             Console.WriteLine("  add          Adds a new game. Usage: add <GameTitle> <ConfigPath> <ProfileTitle1> <ProfilePath1> [<ProfileTitle2> <ProfilePath2> ...]");
             Console.WriteLine("  list         Lists all games and their profiles.");
             Console.WriteLine("  use          Copy a profile to the game's config path. Usage: use <GameTitle> <ProfileTitle>");
+            Console.WriteLine("  delete       Deletes a game. Usage: delete <GameTitle>");
             Console.WriteLine();
             Console.WriteLine("Example:");
             Console.WriteLine("  GCS.CLI.exe add \"NewGame\" \"C:\\path\\to\\configfile.txt\" \"Profile1\" \"C:\\path\\to\\profile1.txt\" \"Profile2\" \"C:\\path\\to\\profile2.txt\"");
             Console.WriteLine("  GCS.CLI.exe list");
             Console.WriteLine("  GCS.CLI.exe use \"NewGame\" \"Profile1\"");
+            Console.WriteLine("  GCS.CLI.exe delete \"NewGame\"");
         }
 
         private static void ListGames(GameDataManager gameDataManager)
