@@ -49,7 +49,7 @@ namespace GCS.Core
             }
         }
 
-        public void AddGameData(string title, string configPath, string profile1, string profile2)
+        public void AddGameData(string title, string configPath, List<Profile> profiles)
         {
             var gameData = LoadGameData();
 
@@ -68,11 +68,7 @@ namespace GCS.Core
             {
                 Title = title,
                 configPath = configPath,
-                Profiles = new Profile
-                {
-                    Profile1 = profile1,
-                    Profile2 = profile2
-                }
+                Profiles = profiles
             };
 
             gameData.Games.Add(newGame);
