@@ -70,7 +70,7 @@
             // 
             // saveButton
             // 
-            saveButton.Location = new Point(139, 24);
+            saveButton.Location = new Point(271, 23);
             saveButton.Name = "saveButton";
             saveButton.Size = new Size(75, 23);
             saveButton.TabIndex = 9;
@@ -81,7 +81,7 @@
             // 
             // addGameButton
             // 
-            addGameButton.Location = new Point(220, 24);
+            addGameButton.Location = new Point(139, 24);
             addGameButton.Name = "addGameButton";
             addGameButton.Size = new Size(75, 23);
             addGameButton.TabIndex = 10;
