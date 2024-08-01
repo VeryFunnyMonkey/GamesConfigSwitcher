@@ -8,7 +8,7 @@ Some games fail to automatically adjust the monitor in-game resolution to the co
 * Create game profiles and store up to 2 profiles per game.
 
 ## TODO
-* Implement unlimited profiles.
+* ~~Implement unlimited profiles.~~
 * Make UI pretty.
 * ~~Create a json file if one is not present.~~
 * Implement a feature that can swap variables within the config file with a value (good for changing resolution settings in a game's config file).

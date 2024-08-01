@@ -9,12 +9,12 @@
     {
         public string Title { get; set; }
         public string configPath { get; set; }
-        public Profile Profiles { get; set; }
+        public List<Profile> Profiles { get; set; }
     }
 
     public class Profile
     {
-        public string Profile1 { get; set; }
-        public string Profile2 { get; set; }
+        public string title { get; set; }
+        public string profilePath { get; set; }
     }
 }
