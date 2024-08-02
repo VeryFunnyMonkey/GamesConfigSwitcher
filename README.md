@@ -5,10 +5,35 @@ Some games fail to automatically adjust the monitor in-game resolution to the co
 
 ## Features
 * Swap out config files using a UI or CLI.
-* Create game profiles and store up to 2 profiles per game.
+* Create multiple game profiles, for different use-cases.
+
+## Usage
+_Both the CLI & UI share the same json file for storing game data, you can swap between them without any issues.
+I created the UI for the purpose of adding games, as I found it easier than CLI, but I use the CLI to use my game profiles_
+
+Both CLI and the UI work in similiar ways, a game profile of comprised of the following:
+
+Game Title - title of the game
+Config Path - the main path of the game's config file. E.g. for Skyrim this would be ```\users\username\My Documents\My Games\Skyrim\skyrim.prefs```
+Profiles - the file that will replace the file in the Config Path
+
+### CLI
+You can execute commands by running the binary in a terminal, using ```.\GCS.CLI.exe```
+```.\GCS.CLI.exe help``` will list out the commands, and explain how to use them.
+
+### UI
+Running the file: ```GCS.UI.exe``` opens a basic UI that allows you to use game profiles, add new games, or edit the profile paths of games.
+
+## Installation
+GCS is portable and stores no appdata files.
+
+1. Download the latest GCS.zip file from the releases.
+2. If you wish to use the CLI, run ```.\GCS.CLI.exe``` from a terminal
+3. If you wish to use the UI, run the file: ```GCS.UI.exe```
 
 ## TODO
 * ~~Implement unlimited profiles.~~
 * Make UI pretty.
 * ~~Create a json file if one is not present.~~
 * Implement a feature that can swap variables within the config file with a value (good for changing resolution settings in a game's config file).
+* Eventually add the ability to have multiple different config files. This is not in the scope currently, but would be a nice to have in the future.
