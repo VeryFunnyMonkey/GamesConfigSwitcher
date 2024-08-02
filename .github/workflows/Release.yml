@@ -28,7 +28,7 @@ jobs:
     - name: Zip build artifacts
       run: |
         mkdir -p output
-        Compress-Archive -Path ../Build/Release/* -DestinationPath output/GCS-${{github.ref_name}}.zip
+        Compress-Archive -Path Build/Release/* -DestinationPath output/GCS-${{github.ref_name}}.zip
 
     - name: Create GitHub Release
       uses: actions/create-release@v1
