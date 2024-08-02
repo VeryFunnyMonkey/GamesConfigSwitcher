@@ -29,7 +29,7 @@ jobs:
       run: |
         mkdir -p output
         run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})
-        zip -j output/GCS-${tag_name}.zip ../Build/Release/*
+        zip -j output/GCS-${RELEASE_VERSION}.zip ../Build/Release/*
 
     - name: Create GitHub Release
       uses: actions/create-release@v1
