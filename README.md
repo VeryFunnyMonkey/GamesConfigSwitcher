@@ -13,9 +13,10 @@ I created the UI for the purpose of adding games, as I found it easier than CLI,
 
 Both CLI and the UI work in similiar ways, a game profile of comprised of the following:
 
-Game Title - title of the game
-Config Path - the main path of the game's config file. E.g. for Skyrim this would be ```\users\username\My Documents\My Games\Skyrim\skyrim.prefs```
-Profiles - the file that will replace the file in the Config Path
+* Game Title - title of the game
+* Config Path - the main path of the game's config file. E.g. for Skyrim this would be
+  ```\users\username\My Documents\My Games\Skyrim\skyrimprefs.ini```
+* Profiles - the file that will replace the file in the Config Path
 
 ### CLI
 You can execute commands by running the binary in a terminal, using ```.\GCS.CLI.exe```
