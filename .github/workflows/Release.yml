@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write   # This is required to create/push the new git tag
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+    - name: Test
+      run: dotnet test --no-build --verbosity normal --configuration Release
+    - name: Zip build artifacts
+      run: |
+        mkdir -p output
+        tag_name=$(echo ${{ github.ref }} | sed 's/refs\/tags\///')
+        zip -j output/GCS-${tag_name}.zip ../Build/Release/*
+
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: output/GCS-$(echo ${{ github.ref }} | sed 's/refs\/tags\///').zip
+        asset_name: GCS-$(echo ${{ github.ref }} | sed 's/refs\/tags\///').zip
+        asset_content_type: application/zip
