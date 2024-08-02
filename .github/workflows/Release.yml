@@ -28,8 +28,7 @@ jobs:
     - name: Zip build artifacts
       run: |
         mkdir -p output
-        echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})
-        zip -j output/GCS-${RELEASE_VERSION}.zip ../Build/Release/*
+        Compress-Archive -Path ../Build/Release/* -DestinationPath output/GCS-${{github.ref_name}}.zip
 
     - name: Create GitHub Release
       uses: actions/create-release@v1
@@ -45,6 +44,6 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: output/GCS-${RELEASE_VERSION}.zip
-        asset_name: GCS-${RELEASE_VERSION}.zip
+        asset_path: output/GCS-${{github.ref_name}}.zip
+        asset_name: GCS-${{github.ref_name}}.zip
         asset_content_type: application/zip
