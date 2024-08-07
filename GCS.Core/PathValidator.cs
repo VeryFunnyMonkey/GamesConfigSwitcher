@@ -40,11 +40,11 @@
             }
             else
             {
-                // Check for drive letter and colon
-                if (path.Length < 3 || !char.IsLetter(path[0]) || path[1] != ':' || !Path.IsPathRooted(path))
-                {
-                    return false;
-                }
+                // // Check for drive letter and colon
+                // if (path.Length < 3 || !char.IsLetter(path[0]) || path[1] != ':' || !Path.IsPathRooted(path))
+                // {
+                //     return false;
+                // }
 
                 // Check for invalid characters in path
                 if (path.IndexOfAny(InvalidPathChars) >= 0)

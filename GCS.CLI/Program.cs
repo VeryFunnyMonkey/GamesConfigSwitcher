@@ -77,7 +77,7 @@ namespace GCS.CLI
                                 var selectedProfile = selectedGame.Profiles.FirstOrDefault(p => p.title.Equals(args[2], StringComparison.OrdinalIgnoreCase));
                                 if (selectedProfile != null)
                                 {
-                                    useProfile(selectedProfile.profilePath, selectedGame.configPath);
+                                    FileHelper.profileCopier(selectedProfile.profilePath, selectedGame.configPath);
                                 }
                                 else
                                 {
@@ -87,6 +87,34 @@ namespace GCS.CLI
                             else
                             {
                                 Console.WriteLine("The selected game could not be found.");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("No games found.");
+                        }
+                    }
+                    break;
+
+               case "useall":
+                    if (args.Length < 2)
+                    {
+                        Console.WriteLine("Usage: useall <ProfileTitle>");
+                    }
+                    else
+                    {
+                        var gameData = gameDataManager.LoadGameData();
+
+                        if (gameData.Games != null && gameData.Games.Count > 0)
+                        {
+                            foreach (var game in gameData.Games)
+                            {
+                                var selectedProfile = game.Profiles.FirstOrDefault(p => p.title.Equals(args[1], StringComparison.OrdinalIgnoreCase));
+                                if (selectedProfile  != null)
+                                {
+                                    FileHelper.profileCopier(selectedProfile.profilePath, game.configPath);
+                                }
+
                             }
                         }
                         else
@@ -121,12 +149,14 @@ namespace GCS.CLI
             Console.WriteLine("  add          Adds a new game. Usage: add <GameTitle> <ConfigPath> <ProfileTitle1> <ProfilePath1> [<ProfileTitle2> <ProfilePath2> ...]");
             Console.WriteLine("  list         Lists all games and their profiles.");
             Console.WriteLine("  use          Copy a profile to the game's config path. Usage: use <GameTitle> <ProfileTitle>");
+            Console.WriteLine("  useall       Copy all the matching profiles for all games to their respective profile config path. Usage: useall <ProfileTitle>");
             Console.WriteLine("  delete       Deletes a game. Usage: delete <GameTitle>");
             Console.WriteLine();
             Console.WriteLine("Example:");
             Console.WriteLine("  GCS.CLI.exe add \"NewGame\" \"C:\\path\\to\\configfile.txt\" \"Profile1\" \"C:\\path\\to\\profile1.txt\" \"Profile2\" \"C:\\path\\to\\profile2.txt\"");
             Console.WriteLine("  GCS.CLI.exe list");
             Console.WriteLine("  GCS.CLI.exe use \"NewGame\" \"Profile1\"");
+            Console.WriteLine("  GCS.CLI.exe useall \"Profile1\"");
             Console.WriteLine("  GCS.CLI.exe delete \"NewGame\"");
         }
 
@@ -151,11 +181,6 @@ namespace GCS.CLI
             {
                 Console.WriteLine("No games found.");
             }
-        }
-
-        private static void useProfile(string profilePath, string configPath)
-        {
-            FileHelper.profileCopier(profilePath, configPath);
         }
     }
 }
