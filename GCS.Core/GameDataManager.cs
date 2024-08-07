@@ -2,14 +2,9 @@
 
 namespace GCS.Core
 { 
-    public class GameDataManager
+    public class GameDataManager(string filePath)
     {
-        private string jsonFilePath;
-
-        public GameDataManager(string filePath)
-        {
-            jsonFilePath = filePath;
-        }
+        private readonly string jsonFilePath = filePath;
 
         public GameData LoadGameData()
         {
@@ -68,7 +63,7 @@ namespace GCS.Core
                                 .Select(g => g.Key)
                                 .ToList();
 
-            if (duplicateProfiles.Any())
+            if (duplicateProfiles.Count != 0)
             {
                 Console.WriteLine($"Duplicate profile titles found: {string.Join(", ", duplicateProfiles)}. Please ensure each profile has a unique title.");
                 return;
@@ -90,7 +85,7 @@ namespace GCS.Core
         {
             var gameData = LoadGameData();
 
-            if (gameData.Games == null || !gameData.Games.Any())
+            if (gameData.Games == null || gameData.Games.Count == 0)
             {
                 Console.WriteLine("No games to delete.");
                 return;
