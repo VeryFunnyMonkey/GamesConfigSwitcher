@@ -1,9 +1,5 @@
 ﻿using GCS.Core;
 using GCS.UI;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace GCS.CLI
 {
@@ -153,11 +149,11 @@ namespace GCS.CLI
             Console.WriteLine("  delete       Deletes a game. Usage: delete <GameTitle>");
             Console.WriteLine();
             Console.WriteLine("Example:");
-            Console.WriteLine("  GCS.CLI.exe add \"NewGame\" \"C:\\path\\to\\configfile.txt\" \"Profile1\" \"C:\\path\\to\\profile1.txt\" \"Profile2\" \"C:\\path\\to\\profile2.txt\"");
-            Console.WriteLine("  GCS.CLI.exe list");
-            Console.WriteLine("  GCS.CLI.exe use \"NewGame\" \"Profile1\"");
-            Console.WriteLine("  GCS.CLI.exe useall \"Profile1\"");
-            Console.WriteLine("  GCS.CLI.exe delete \"NewGame\"");
+            Console.WriteLine("  gcs add \"NewGame\" \"C:\\path\\to\\configfile.txt\" \"Profile1\" \"C:\\path\\to\\profile1.txt\" \"Profile2\" \"C:\\path\\to\\profile2.txt\"");
+            Console.WriteLine("  gcs list");
+            Console.WriteLine("  gcs use \"NewGame\" \"Profile1\"");
+            Console.WriteLine("  gcs useall \"Profile1\"");
+            Console.WriteLine("  gcs delete \"NewGame\"");
         }
 
         private static void ListGames(GameDataManager gameDataManager)

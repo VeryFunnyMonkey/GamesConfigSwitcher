@@ -71,8 +71,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.once.outputs.upload_url }}
-        asset_path: ./output/${{ matrix.runtime }}/GCS.CLI${{ env.file_ext }}
-        asset_name: GCS.CLI-${{ matrix.runtime }}${{ env.file_ext }}
+        asset_path: ./output/${{ matrix.runtime }}/gcs${{ env.file_ext }}
+        asset_name: gcs-${{ matrix.runtime }}${{ env.file_ext }}
         asset_content_type: application/octet-stream
 
     - name: Upload UI Asset
