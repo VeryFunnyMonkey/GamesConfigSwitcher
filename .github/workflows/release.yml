@@ -38,10 +38,12 @@ jobs:
       run: dotnet test --no-build --verbosity normal --configuration Release
     - name: Publish single-file executable
       run: dotnet publish GCS.CLI -r ${{ matrix.rid }} -c Release /p:PublishSingleFile=true /p:PublishTrimmed=true --output ./output/${{ matrix.rid }}
-    - name: Zip build artifacts
+
+    - name: Publish and Zip UI artifacts (Windows Only)
+      if: matrix.os == 'windows-latest'
       run: |
-        mkdir -p output
-        Compress-Archive -Path Build/Release/* -DestinationPath output/GCS-${{github.ref_name}}.zip
+        dotnet publish GCS.CLI -r ${{ matrix.rid }} -c Release /p:PublishSingleFile=true --output ./output/${{ matrix.rid }}-ui
+        Compress-Archive -Path ./output/${{ matrix.rid }}-ui/* -DestinationPath ./output/GCS-UI${{github.ref_name}}.zip
 
     - name: Create GitHub Release
       id: create_release
@@ -54,15 +56,16 @@ jobs:
         draft: false
         prerelease: false
 
-    - name: Upload Zip Release Asset
-      id: upload-release-asset-zip
+    - name: Upload Zip UI Asset (Windows Only)
+      if: matrix.os == 'windows-latest'
+      id: upload-ui-asset-zip
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: output/GCS-${{github.ref_name}}.zip
-        asset_name: GCS-${{github.ref_name}}.zip
+        asset_path: output/GCS-UI${{github.ref_name}}.zip
+        asset_name: GCS-UI${{github.ref_name}}.zip
         asset_content_type: application/zip
 
     - name: Upload Windows Single File
