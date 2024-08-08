@@ -72,7 +72,7 @@ jobs:
       with:
         upload_url: ${{ needs.once.outputs.upload_url }}
         asset_path: ./output/${{ matrix.runtime }}/GCS.CLI${{ env.file_ext }}
-        asset_name: GCS.CLI-${{ matrix.runtime }}
+        asset_name: GCS.CLI-${{ matrix.runtime }}${{ env.file_ext }}
         asset_content_type: application/octet-stream
 
     - name: Upload UI Asset
