@@ -15,14 +15,15 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-latest, ubuntu-latest]
+        rid: [win-x64, linux-x64, linux-arm]
         include:
           - os: windows-latest
             rid: win-x64
           - os: ubuntu-latest
             rid: linux-x64
-          - os: macos-latest
-            rid: osx-x64
+          - os: ubuntu-latest
+            rid: linux-arm
 
     steps:
     - uses: actions/checkout@v4
@@ -46,6 +47,7 @@ jobs:
         Compress-Archive -Path ./output/${{ matrix.rid }}-ui/* -DestinationPath ./output/GCS-UI${{github.ref_name}}.zip
 
     - name: Create GitHub Release
+      if: matrix.os == 'windows-latest'
       id: create_release
       uses: actions/create-release@v1
       env:
@@ -90,13 +92,13 @@ jobs:
         asset_name: GCS.CLI-linux-x64
         asset_content_type: application/octet-stream
 
-    - name: Upload macOS Single File
-      if: matrix.os == 'macos-latest'
+    - name: Upload Linux ARM Single File
+      if: matrix.rid == 'linux-arm'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: output/osx-x64/GCS.CLI
-        asset_name: GCS.CLI-osx-x64
+        asset_path: output/inux-arm/GCS.CLI
+        asset_name: GCS.CLI-linux-arm
         asset_content_type: application/octet-stream
