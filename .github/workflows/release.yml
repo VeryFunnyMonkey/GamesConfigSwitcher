@@ -76,6 +76,7 @@ jobs:
         asset_content_type: application/octet-stream
 
     - name: Upload UI Asset
+      if: matrix.runtime == 'win-x64'
       id: upload-ui-asset
       uses: actions/upload-release-asset@v1
       env:
