@@ -1,5 +1,4 @@
 ﻿using GCS.Core;
-using GCS.UI;
 
 namespace GCS.CLI
 {
