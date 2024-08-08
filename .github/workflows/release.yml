@@ -13,6 +13,17 @@ jobs:
 
     runs-on: windows-latest
 
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        include:
+          - os: windows-latest
+            rid: win-x64
+          - os: ubuntu-latest
+            rid: linux-x64
+          - os: macos-latest
+            rid: osx-x64
+
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
@@ -25,6 +36,8 @@ jobs:
       run: dotnet build --no-restore --configuration Release
     - name: Test
       run: dotnet test --no-build --verbosity normal --configuration Release
+    - name: Publish single-file executable
+      run: dotnet publish GCS.CLI -r ${{ matrix.rid }} -c Release /p:PublishSingleFile=true /p:PublishTrimmed=true --output ./output/${{ matrix.rid }}
     - name: Zip build artifacts
       run: |
         mkdir -p output
@@ -41,8 +54,8 @@ jobs:
         draft: false
         prerelease: false
 
-    - name: Upload Release Asset
-      id: upload-release-asset
+    - name: Upload Zip Release Asset
+      id: upload-release-asset-zip
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -51,3 +64,36 @@ jobs:
         asset_path: output/GCS-${{github.ref_name}}.zip
         asset_name: GCS-${{github.ref_name}}.zip
         asset_content_type: application/zip
+
+    - name: Upload Windows Single File
+      if: matrix.os == 'windows-latest'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: output/win-x64/GCS.CLI.exe
+        asset_name: GCS.CLI-win-x64.exe
+        asset_content_type: application/octet-stream
+
+    - name: Upload Linux Single File
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: output/linux-x64/GCS.CLI
+        asset_name: GCS.CLI-linux-x64
+        asset_content_type: application/octet-stream
+
+    - name: Upload macOS Single File
+      if: matrix.os == 'macos-latest'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: output/osx-x64/GCS.CLI
+        asset_name: GCS.CLI-osx-x64
+        asset_content_type: application/octet-stream
