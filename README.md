@@ -19,18 +19,23 @@ Both CLI and the UI work in similiar ways, a game profile of comprised of the fo
 * Profiles - the file that will replace the file in the Config Path
 
 ### CLI
-You can execute commands by running the binary in a terminal, using ```.\GCS.CLI.exe```
-```.\GCS.CLI.exe help``` will list out the commands, and explain how to use them.
+You can execute commands by running the binary in a terminal, using ```.\gcs```
+```.\gcs help``` will list out the commands, and explain how to use them.
 
-### UI
+### UI (Windows Only)
 Running the file: ```GCS.UI.exe``` opens a basic UI that allows you to use game profiles, add new games, or edit the profile paths of games.
 
 ## Installation
-GCS is portable and stores no appdata files.
+GCS is portable and stores no appdata files. It only creates a gameData.json file in the directory the binary is executed.
 
-1. Download the latest GCS.zip file from the releases.
-2. If you wish to use the CLI, run ```.\GCS.CLI.exe``` from a terminal
-3. If you wish to use the UI, run the file: ```GCS.UI.exe```
+### CLI
+1. Download the latest gcs binary from the releases, matching your operating system and architecture.
+2. On Unix based systems, you may need to make the ```gcs``` binary executable, by running ```chmod +x gcs```.
+3. Run the ```gcs``` executable, use the ```help``` command to see all available commands.
+
+### UI (Windows Only)
+1. Download the latest GCS.UI zip file from the releases.
+3. Extract the files and un the  ```GCS.UI.exe``` executable.
 
 ## TODO
 * ~~Implement unlimited profiles.~~
