@@ -52,8 +52,8 @@ jobs:
     - name: Publish and Zip UI artifacts (Windows Only)
       if: matrix.runtime == 'win-x64'
       run: |
-        dotnet publish GCS.CLI -r ${{ matrix.runtime }} -c Release /p:PublishSingleFile=true --output ./output/${{ matrix.runtime }}-ui
-        cd ./output && zip -r GCS-UI${{ github.ref_name }}.zip ${{ matrix.runtime }}-ui
+        dotnet publish GCS.UI -r ${{ matrix.runtime }} -c Release /p:PublishSingleFile=true --output ./output/${{ matrix.runtime }}-ui
+        cd ./output && zip -r GCS-UI-${{ github.ref_name }}.zip ${{ matrix.runtime }}-ui
 
     - name: Determine file extension
       id: file_ext
@@ -83,6 +83,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.once.outputs.upload_url }}
-        asset_path: ./output/GCS-UI${{github.ref_name}}.zip
-        asset_name: GCS-UI${{github.ref_name}}.zip
+        asset_path: ./output/GCS-UI-${{github.ref_name}}.zip
+        asset_name: GCS-UI-${{github.ref_name}}.zip
         asset_content_type: application/zip
