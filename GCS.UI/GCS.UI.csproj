@@ -8,7 +8,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <BaseOutputPath>..\Build\</BaseOutputPath>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
-	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
 
   <ItemGroup>

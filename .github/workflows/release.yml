@@ -1,28 +1,36 @@
-name: release
+name: Create Release
 
 on:
   push:
     tags:
-      - 'v*'
-
-permissions:
-  contents: write   # This is required to create/push the new git tag
+      - "v*"
 
 jobs:
-  build:
-    runs-on: windows-latest
+  once:
+    name: Create GitHub release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Create a release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+          prerelease: true
 
+  build:
+    name: Create cross-platform release build, tag and upload binaries
+    needs: once
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest]
-        include:
-          - os: windows-latest
-            rid: win-x64
-          - os: ubuntu-latest
-            rid: linux-x64
-          - os: ubuntu-latest
-            rid: linux-arm
-
+        os: [ubuntu-latest]
+        runtime: [win-x64, linux-x64, linux-arm]
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
@@ -36,84 +44,41 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal --configuration Release
     - name: Publish single-file executable
-      run: dotnet publish GCS.CLI -r ${{ matrix.rid }} -c Release /p:PublishSingleFile=true /p:PublishTrimmed=true --output ./output/${{ matrix.rid }}
-
+      run: dotnet publish GCS.CLI -r ${{ matrix.runtime }} -c Release /p:PublishSingleFile=true /p:PublishTrimmed=true --output ./output/${{ matrix.runtime }}
+    
     - name: Publish and Zip UI artifacts (Windows Only)
-      if: matrix.os == 'windows-latest'
+      if: matrix.runtime == 'win-x64'
       run: |
-        dotnet publish GCS.CLI -r ${{ matrix.rid }} -c Release /p:PublishSingleFile=true --output ./output/${{ matrix.rid }}-ui
-        Compress-Archive -Path ./output/${{ matrix.rid }}-ui/* -DestinationPath ./output/GCS-UI${{github.ref_name}}.zip
+        dotnet publish GCS.CLI -r ${{ matrix.runtime }} -c Release /p:PublishSingleFile=true --output ./output/${{ matrix.runtime }}-ui
+        zip -r ./output/GCS-UI${{ github.ref_name }}.zip ./output/${{ matrix.runtime }}-ui/
 
-    - name: Upload Artifacts
-      if: always()
-      uses: actions/upload-artifact@v3
-      with:
-        name: build-output
-        path: ./output/
+    - name: Determine file extension
+      id: file_ext
+      run: |
+        if [ "${{ matrix.runtime }}" == "win-x64" ]; then
+          echo "file_ext=.exe" >> $GITHUB_ENV
+        else
+          echo "file_ext=" >> $GITHUB_ENV
+        fi
 
-  release:
-    runs-on: ubuntu-latest
-    needs: build
-    if: success()  # Run this job only if the build jobs are successful
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Download Artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: build-output
-
-    - name: Create GitHub Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: false
-
-    - name: Upload UI Asset (Windows Only)
-      if: contains(steps.create_release.outputs.upload_url, 'windows')
+    - name: Upload Release Asset
+      id: upload-release-asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: output/GCS-UI${{github.ref_name}}.zip
+        upload_url: ${{ needs.once.outputs.upload_url }}
+        asset_path: ./output/${{ matrix.runtime }}/GCS.CLI${{ env.file_ext }}
+        asset_name: GCS.CLI-${{ matrix.runtime }}
+        asset_content_type: application/octet-stream
+
+    - name: Upload UI Asset
+      id: upload-ui-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.once.outputs.upload_url }}
+        asset_path: ./output/GCS-UI${{github.ref_name}}.zip
         asset_name: GCS-UI${{github.ref_name}}.zip
         asset_content_type: application/zip
-
-    - name: Upload Windows Single File
-      if: contains(steps.create_release.outputs.upload_url, 'win-x64')
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: output/win-x64/GCS.CLI.exe
-        asset_name: GCS.CLI-win-x64.exe
-        asset_content_type: application/octet-stream
-
-    - name: Upload Linux Single File
-      if: contains(steps.create_release.outputs.upload_url, 'linux-x64')
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: output/linux-x64/GCS.CLI
-        asset_name: GCS.CLI-linux-x64
-        asset_content_type: application/octet-stream
-
-    - name: Upload Linux ARM Single File
-      if: contains(steps.create_release.outputs.upload_url, 'linux-arm')
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: output/linux-arm/GCS.CLI
-        asset_name: GCS.CLI-linux-arm
-        asset_content_type: application/octet-stream
