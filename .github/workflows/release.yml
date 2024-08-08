@@ -53,12 +53,12 @@ jobs:
       if: matrix.runtime == 'win-x64'
       run: |
         dotnet publish GCS.CLI -r ${{ matrix.runtime }} -c Release /p:PublishSingleFile=true --output ./output/${{ matrix.runtime }}-ui
-        cd ./output && zip -r ../GCS-UI${{ github.ref_name }}.zip ${matrix.runtime}-ui/
+        cd ./output && zip -r ../GCS-UI${{ github.ref_name }}.zip ${{ matrix.runtime }}-ui
 
     - name: Determine file extension
       id: file_ext
       run: |
-        if [ "${{ matrix.runtime }}" == "win-x64" ]; then
+        if [ "${{ matrix.runtime }}" == win-* ]; then
           echo "file_ext=.exe" >> $GITHUB_ENV
         else
           echo "file_ext=" >> $GITHUB_ENV
