@@ -16,5 +16,6 @@
     {
         public string title { get; set; }
         public string profilePath { get; set; }
+        public Dictionary<string, string> Variables { get; set; }
     }
 }
