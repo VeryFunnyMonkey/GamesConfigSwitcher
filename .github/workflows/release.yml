@@ -58,7 +58,7 @@ jobs:
     - name: Determine file extension
       id: file_ext
       run: |
-        if [ "${{ matrix.runtime }}" == win-* ]; then
+        if [[ "${{ matrix.runtime }}" == "win-"* ]]; then
           echo "file_ext=.exe" >> $GITHUB_ENV
         else
           echo "file_ext=" >> $GITHUB_ENV
