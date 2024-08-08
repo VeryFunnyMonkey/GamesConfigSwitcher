@@ -10,12 +10,11 @@ permissions:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
 
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest]
-        rid: [win-x64, linux-x64, linux-arm]
         include:
           - os: windows-latest
             rid: win-x64
