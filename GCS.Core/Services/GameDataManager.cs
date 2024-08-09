@@ -1,11 +1,9 @@
 ﻿using Newtonsoft.Json;
 
 namespace GCS.Core
-{ 
-    public class GameDataManager(string filePath)
+{
+    public class GameDataManager(string jsonFilePath) : IGameDataManager
     {
-        private readonly string jsonFilePath = filePath;
-
         public GameData LoadGameData()
         {
             if (File.Exists(jsonFilePath))
@@ -104,6 +102,5 @@ namespace GCS.Core
                 Console.WriteLine($"Game with the title '{title}' not found.");
             }
         }
-
     }
 }

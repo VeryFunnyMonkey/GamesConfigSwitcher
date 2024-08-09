@@ -1,4 +1,4 @@
-﻿namespace GCS.UI
+﻿namespace GCS.Core
 {
 
     using System;

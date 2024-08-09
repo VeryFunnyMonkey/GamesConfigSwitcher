@@ -26,7 +26,33 @@ A game profile consists of the following:
 ### CLI
 You can execute commands by running the binary in a terminal, using: ```.\gcs```
 
-```.\gcs help``` will list out the commands, and explain how to use them.
+```.\gcs --help``` will list out the commands, and explain how to use them.
+
+### Variables
+_Currently only available in CLI_
+
+When using the ```use``` or ```useall``` command, you can optionally pass in the ```--variable -v``` option to use the variables function.
+It works by finding a variable within the profile file, and replacing it with whatever value is defined at runtime.
+Variables are defined in the profile file using the following format: ```${variable}```
+When the ```--variable -v``` option is used, you can define the name of the variable and the value in the following format: ```variable:value```
+
+***Example:***
+You want to dynamically set the resolution of the game to your TVs resolution.
+
+In your profile, for this example let's call it "tv", the way the game defines the resolution is with an x & y value, it may look something like this: 
+```
+x: 1920
+y: 1080
+```
+You would replace the values with a variable like so:
+```
+x: ${x}
+y: ${y}
+```
+Then using the following command, you can set the games resolution at runtime:
+```.\gcs use -t myGame -p tv -v x:3840 -v y:2160```
+This will set the x & y value to 3840 & 2160 respectively.
+
 
 ### UI (Windows Only)
 Running the file: ```GCS.UI.exe``` opens a basic UI that allows you to use game profiles, add new games, or edit the profile paths of games.
@@ -39,7 +65,7 @@ GCS is portable and stores no appdata files. It only creates a gameData.json fil
 2. On Unix based systems, you may need to make the ```gcs``` binary executable, by running:
    ```bash
    chmod +x gcs
-4. Run the ```gcs``` executable, use the ```help``` command to see all available commands.
+4. Run the ```gcs``` executable, use the ```--help``` option to see all available commands.
 
 ### UI (Windows Only)
 1. Download the latest GCS.UI zip file from the releases.
@@ -49,5 +75,5 @@ GCS is portable and stores no appdata files. It only creates a gameData.json fil
 * ~~Implement unlimited profiles.~~
 * Make UI pretty.
 * ~~Create a json file if one is not present.~~
-* Implement a feature that can swap variables within the config file with a value (good for changing resolution settings in a game's config file).
+* ~~Implement a feature that can swap variables within the config file with a value (good for changing resolution settings in a game's config file).~~
 * Eventually add the ability to have multiple different config files. This is not in the scope currently, but would be a nice to have in the future.
