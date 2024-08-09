@@ -23,35 +23,12 @@ namespace GCS.CLI
 
             if (gameData.Games != null && gameData.Games.Count > 0)
             {
-                foreach (var game in gameData.Games)
+                foreach (var selectedGame in gameData.Games)
                 {
-                    var selectedProfile = game.Profiles.FirstOrDefault(p => p.title.Equals(profile, StringComparison.OrdinalIgnoreCase));
+                    var selectedProfile = selectedGame.Profiles.FirstOrDefault(p => p.title.Equals(profile, StringComparison.OrdinalIgnoreCase));
                     if (selectedProfile  != null)
                     {
-                        FileHelper.profileCopier(selectedProfile.profilePath, game.configPath);
-
-                        if (variable != null) // copy and pasted from "use", probably should turn this into a shared function later
-                        {
-                            var variables = new Dictionary<string, string>();
-
-                            foreach (var variableString in variable)
-                            {
-                                var variableArray = variableString.Split(':', StringSplitOptions.RemoveEmptyEntries);
-                                if ((variableArray.Length % 2) != 0)
-                                {
-                                    Console.WriteLine("Invalid number of arguments in variable");
-                                    return;
-
-                                }
-
-                                var key = variableArray[0];
-                                var value = variableArray[1];
-
-                                variables.Add(key, value);
-
-                                VariableHandler.useVariable(game.configPath, variables);
-                            }
-                        }
+                        ProfileHelper.HandleProfile(selectedProfile.profilePath, selectedGame.configPath, variable);
                     }
 
                 }

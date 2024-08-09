@@ -30,30 +30,7 @@ namespace GCS.CLI
                     var selectedProfile = selectedGame.Profiles.FirstOrDefault(p => p.title.Equals(profile, StringComparison.OrdinalIgnoreCase));
                     if (selectedProfile != null)
                     {
-                        FileHelper.profileCopier(selectedProfile.profilePath, selectedGame.configPath);
-                        
-                        if (variable != null)
-                        {
-                            var variables = new Dictionary<string, string>();
-
-                            foreach (var variableString in variable)
-                            {
-                                var variableArray = variableString.Split(':', StringSplitOptions.RemoveEmptyEntries);
-                                if ((variableArray.Length % 2) != 0)
-                                {
-                                    Console.WriteLine("Invalid number of arguments in variable");
-                                    return;
-
-                                }
-
-                                var key = variableArray[0];
-                                var value = variableArray[1];
-
-                                variables.Add(key, value);
-
-                                VariableHandler.useVariable(selectedGame.configPath, variables);
-                            }
-                        }
+                        ProfileHelper.HandleProfile(selectedProfile.profilePath, selectedGame.configPath, variable);
                     }
 
                     else
