@@ -47,7 +47,7 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal --configuration Release
     - name: Publish single-file executable
-      run: dotnet publish GCS.CLI -r ${{ matrix.runtime }} -c Release /p:PublishSingleFile=true /p:PublishTrimmed=true --output ./output/${{ matrix.runtime }}
+      run: dotnet publish GCS.CLI -r ${{ matrix.runtime }} -c Release /p:PublishSingleFile=true --output ./output/${{ matrix.runtime }}
     
     - name: Publish and Zip UI artifacts (Windows Only)
       if: matrix.runtime == 'win-x64'
