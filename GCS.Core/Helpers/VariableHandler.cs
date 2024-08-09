@@ -2,7 +2,7 @@ namespace GCS.Core
 {
     public static class VariableHandler
     {
-        public static bool useVariable(string profile, Dictionary<string, string> Variables)
+        public static void useVariable(string profile, Dictionary<string, string> Variables)
         {
             foreach (var kvp in Variables)
             {
@@ -16,11 +16,8 @@ namespace GCS.Core
                 {
                     fileContents = fileContents.Replace(formattedVar, kvp.Value);
                     File.WriteAllText(profile, fileContents);
-                    return true;
                 }
-
             }
-            return false;
         }
     } 
 }
