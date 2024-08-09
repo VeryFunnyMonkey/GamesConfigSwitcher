@@ -3,7 +3,7 @@
 
 <p align="center">
   <img width="354" alt="UI Screenshot" src="https://github.com/user-attachments/assets/bad2873d-eebc-4ca9-bb17-08d4c08b4ac9"> 
-  <img width="1151" alt="CLI Screenshot" src="https://github.com/user-attachments/assets/a66e6b1f-8ea3-4ec0-9615-2a6da660eb9e">
+  <img width="935" alt="CLI Screenshot" src="https://github.com/user-attachments/assets/b7940bdf-e8ab-4d3c-a27c-123d98394a32">
 </p>
 
 **GCS** is a tool designed to alleviate the hassle of manually adjusting in-game resolutions when switching between multiple monitors (e.g., TV, PC Monitor, Moonlight Streaming). Some games fail to automatically adjust the resolution to the correct monitor, forcing you to change settings manually. GCS solves this problem by allowing you to easily swap out game config files using either a graphical interface or the command line. You can further automate this process with tools like AutoHotkey (AHK).
