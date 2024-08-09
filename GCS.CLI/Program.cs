@@ -16,5 +16,9 @@ builder.Services.AddSingleton<IGameDataManager>(provider =>
 var app = builder.Build();
 
 app.AddCommands<ListCommand>();
+app.AddCommands<AddCommand>();
+app.AddCommands<DeleteCommand>();
+app.AddCommands<UseCommand>();
+app.AddCommands<UseAllCommand>();
 
 app.Run();

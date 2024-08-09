@@ -10,8 +10,6 @@ namespace GCS.Core
 
                 var fileContents = File.ReadAllText(profile);
 
-                Console.WriteLine(formattedVar);
-
                 if(fileContents.Contains(formattedVar))
                 {
                     fileContents = fileContents.Replace(formattedVar, kvp.Value);

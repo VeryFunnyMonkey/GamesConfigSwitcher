@@ -11,7 +11,7 @@ namespace GCS.CLI
             _gameManager = gameManager;
         }
 
-        [Command ("list")]
+        [Command ("list", Description = "Lists all games and their profiles.")]
         public async Task List()
         {
             var gameData = _gameManager.LoadGameData();
