@@ -28,7 +28,7 @@ You can execute commands by running the binary in a terminal, using: ```.\gcs```
 
 ```.\gcs --help``` will list out the commands, and explain how to use them.
 
-### Variables
+#### Variables
 _Currently only available in CLI_
 
 When using the ```use``` or ```useall``` command, you can optionally pass in the ```--variable -v``` option to use the variables function.
@@ -71,6 +71,59 @@ GCS is portable and stores no appdata files. It only creates a gameData.json fil
 1. Download the latest GCS.UI zip file from the releases.
 3. Extract the files and un the  ```GCS.UI.exe``` executable.
 
+### Building
+#### Prerequisites
+- [.NET SDK 8.0](https://dotnet.microsoft.com/download/dotnet/8.0) or later
+
+#### Steps
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/VeryFunnyMonkey/GamesConfigSwitcher.git
+   cd GamesConfigSwitcher
+   ```
+   
+3. **Restore Dependencies:**
+   
+   Navigate to the root directory of your project and run:
+   ```bash
+   dotnet restore
+   ```
+
+5. **Build the Solution:**
+   
+   To build the solution, use the following command:
+   ```bash
+   dotnet build --configuration Release
+   ```
+   
+6. **Publish the CLI Application:**
+   
+   To create a single-file executable for the CLI, run:
+   ```bash
+   dotnet publish GCS.CLI -r <runtime> -c Release /p:PublishSingleFile=true --output ./output/cli
+   ```
+   __See [here](https://learn.microsoft.com/en-us/dotnet/core/rid-catalog#known-rids) for the available runtimes__
+   
+7. **Publish the UI Application (Windows Only):**
+   
+   To create a single-file executable for the CLI, run:
+   ```bash
+   dotnet publish GCS.UI -r <runtime> -c Release /p:PublishSingleFile=true --output ./output/ui
+   ```
+   __See [here](https://learn.microsoft.com/en-us/dotnet/core/rid-catalog#known-rids) for the available runtimes__
+   
+8. **Locate the Binaries:**
+   
+   After publishing, the executables will be located in the ```./output/cli``` and ```./output/ui``` directories for the CLI and UI respectively.
+
+9. **Run the Application:**
+   
+   **- CLI:** Navigate to the ```./output/cli``` directory and run:
+   ```bash
+   ./gcs --help
+   ```
+   **- UI:** Navigate to the ./publish/ui directory and double-click the GCS.UI.exe file to launch the UI.
+   
 ## TODO
 * ~~Implement unlimited profiles.~~
 * Make UI pretty.
