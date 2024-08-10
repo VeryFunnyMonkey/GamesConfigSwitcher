@@ -24,9 +24,14 @@ A game profile consists of the following:
 * Profiles - the file that will replace the file in the Config Path
 
 ### CLI
-You can execute commands by running the binary in a terminal, using: ```.\gcs```
-
-```.\gcs --help``` will list out the commands, and explain how to use them.
+You can execute commands by running the binary in a terminal, using: 
+```bash
+.\gcs
+```
+To list out the commands, and see their usage, run:
+```bash
+.\gcs --help
+```
 
 #### Variables
 _Currently only available in CLI_
