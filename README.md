@@ -123,6 +123,21 @@ GCS is portable and stores no appdata files. It only creates a gameData.json fil
    ./gcs --help
    ```
    **- UI:** Navigate to the ./publish/ui directory and double-click the GCS.UI.exe file to launch the UI.
+
+### Libraries and Dependencies
+
+GCS relies on several libraries and packages to function. Below are the key libraries used:
+
+### Libraries and Dependencies
+
+GCS relies on several libraries and packages to function. Below are the key libraries used:
+
+- **[Cocona](https://github.com/mayuki/Cocona):** Used for handling command-line interface commands and arguments.
+- **Newtonsoft.Json:** Used for handling JSON serialization and deserialization.
+- **Microsoft.Extensions.DependencyInjection:** Provides dependency injection capabilities for the application (currently only used in CLI).
+- **WinForms:** Used for building the graphical user interface for the UI (Windows Only).
+
+All necessary dependencies are restored automatically when you run `dotnet restore`. If you wish to explore or modify the dependencies, you can find them listed in the `.csproj` files of the respective projects.
    
 ## TODO
 * ~~Implement unlimited profiles.~~
