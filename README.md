@@ -128,10 +128,6 @@ GCS is portable and stores no appdata files. It only creates a gameData.json fil
 
 GCS relies on several libraries and packages to function. Below are the key libraries used:
 
-### Libraries and Dependencies
-
-GCS relies on several libraries and packages to function. Below are the key libraries used:
-
 - **[Cocona](https://github.com/mayuki/Cocona):** Used for handling command-line interface commands and arguments.
 - **Newtonsoft.Json:** Used for handling JSON serialization and deserialization.
 - **Microsoft.Extensions.DependencyInjection:** Provides dependency injection capabilities for the application (currently only used in CLI).
