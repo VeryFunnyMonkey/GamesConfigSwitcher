@@ -1,5 +1,32 @@
 # Game Config Switcher (GCS)
-## Easily Copy Game Config File Profiles via UI or CLI
+
+## Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Usage](#usage)
+  - [Game Profile Structure](#game-profile-structure)
+  - [CLI](#cli)
+    - [Commands](#commands)
+    - [Variables](#variables)
+  - [UI (Windows Only)](#ui-windows-only)
+- [Installation](#installation)
+  - [CLI](#cli-installation)
+  - [UI (Windows Only)](#ui-windows-only)
+- [Building](#building)
+  - [Prerequisites](#prerequisites)
+  - [Steps](#steps)
+    - [Clone the Repository](#clone-the-repository)
+    - [Restore Dependencies](#restore-dependencies)
+    - [Build the Solution](#build-the-solution)
+    - [Publish the CLI Application](#publish-the-cli-application)
+    - [Publish the UI Application (Windows Only)](#publish-the-ui-application-windows-only)
+    - [Locate the Binaries](#locate-the-binaries)
+    - [Run the Application](#run-the-application)
+- [Libraries and Dependencies](#libraries-and-dependencies)
+- [TODO](#todo)
+
+## Overview
+Easily Copy Game Config File Profiles via UI or CLI
 
 <p align="center">
   <img width="354" alt="UI Screenshot" src="https://github.com/user-attachments/assets/bad2873d-eebc-4ca9-bb17-08d4c08b4ac9"> 
@@ -18,10 +45,10 @@ _Both the CLI and UI share the same JSON file for storing game data, so you can 
 ### Game Profile Structure
 A game profile consists of the following:
 
-- **Game Title:** The name of the game.
-- **Config Path:** The path to the game's main config file. For example, for Skyrim, this would be:
-  ```\users\username\My Documents\My Games\Skyrim\skyrimprefs.ini```
-* Profiles - the file that will replace the file in the Config Path
+  - **Game Title:** The name of the game.
+  - **Config Path:** The path to the game's main config file. For example, for Skyrim, this would be:
+    ```\users\username\My Documents\My Games\Skyrim\skyrimprefs.ini```
+  - **Profiles:** - the file that will replace the file in the Config Path
 
 ### CLI
 You can execute commands by running the binary in a terminal, using: 
@@ -32,6 +59,80 @@ To list out the commands, and see their usage, run:
 ```bash
 .\gcs --help
 ```
+#### Commands
+#### Commands
+
+- **Add**
+  - **Description:** Adds a new game with its configuration path and profiles. You must have at least 1 profile, but can have as many profiles as you need.
+  - Syntax
+    ```bash
+    .\gcs add -t "Game Title" -c "Game Config File" -p "<profileTitle profilePath>" -p "<profileTitle profilePath>"
+    ```
+  - **Usage Example:**
+    ```bash
+    .\gcs add -t "Skyrim" -c "\users\username\My Documents\My Games\Skyrim\skyrimprefs.ini" -p "Profile1 C:\Path\To\Profile1.ini" -p "Profile2 C:\Path\To\Profile2.ini"
+    ```
+  - **Explanation:** This command adds a game titled "Skyrim" with the given configuration path and two profiles: "Profile1" and "Profile2", each with its own path.
+
+- **Delete**
+  - **Description:** Deletes an existing game from the configuration.
+  - Syntax
+    ```bash
+    .\gcs delete -t "Game Title"
+    ```
+  - **Usage Example:**
+    ```bash
+    .\gcs delete -t "Skyrim"
+    ```
+  - **Explanation:** This command deletes the game titled "Skyrim" from the configuration.
+
+- **Edit**
+  - **Description:** Edits an existing game’s title, configuration path, or profiles.
+  - **Syntax:**
+    ```bash
+    .\gcs edit -o "Old Game Title" -t "New Title" -c "New Game Config Path" -p "NewProfileTitle NewProfilePath"
+    ```
+  - **Usage Example:**
+    ```bash
+    .\gcs edit -o "Skyrim" -t "Skyrim SE" -c "\users\username\My Documents\My Games\Skyrim Special Edition\skyrimprefs.ini" -p "Profile1 C:\Path\To\NewProfile1.ini"
+    ```
+  - **Explanation:** This command changes the title of "Skyrim" to "Skyrim SE", updates the configuration path, and edits "Profile1" with a new path.
+
+- **List**
+  - **Description:** Lists all games and their profiles along with the configuration paths.
+  - **Syntax:**
+    ```bash
+    .\gcs list
+    ```
+  - **Usage Example:**
+    ```bash
+    .\gcs list
+    ```
+  - **Explanation:** This command lists all stored games, their configuration paths, and associated profiles.
+
+- **Use**
+  - **Description:** Copies the selected profile to the game's configuration path. [variables](#variables) are optional.
+  - **Syntax:**
+    ```bash
+    .\gcs use -t "Game Title" -p "Profile Title" -v "variable:value"
+    ```
+  - **Usage Example:**
+    ```bash
+    .\gcs use -t "Skyrim" -p "Profile1" -v "x:3840" -v "y:2160"
+    ```
+  - **Explanation:** This command copies "Profile1" for "Skyrim" to its configuration path, replacing variables `x` and `y` with `3840` and `2160` respectively.
+
+- **UseAll**
+  - **Description:** Copies the matching profiles for all games to their respective configuration paths. [variables](#variables) are optional.
+  - **Syntax:**
+    ```bash
+    .\gcs useall -p "Profile Title" -v "variable:value"
+    ```
+  - **Usage Example:**
+    ```bash
+    .\gcs useall -p "Profile1" -v "x:3840" -v "y:2160"
+    ```
+  - **Explanation:** This command copies "Profile1" for all games to their configuration paths, replacing variables `x` and `y` with `3840` and `2160` respectively.
 
 #### Variables
 _Currently only available in CLI_
@@ -58,70 +159,65 @@ Then using the following command, you can set the games resolution at runtime:
 ```.\gcs use -t myGame -p tv -v x:3840 -v y:2160```
 This will set the x & y value to 3840 & 2160 respectively.
 
-
 ### UI (Windows Only)
 Running the file: ```GCS.UI.exe``` opens a basic UI that allows you to use game profiles, add new games, or edit the profile paths of games.
 
 ## Installation
 GCS is portable and stores no appdata files. It only creates a gameData.json file in the directory the binary is executed.
 
-### CLI
+### CLI Installation
 1. Download the latest gcs binary from the releases, matching your operating system and architecture.
 2. On Unix based systems, you may need to make the ```gcs``` binary executable, by running:
    ```bash
    chmod +x gcs
 4. Run the ```gcs``` executable, use the ```--help``` option to see all available commands.
 
-### UI (Windows Only)
+### UI Installation (Windows Only)
 1. Download the latest GCS.UI zip file from the releases.
 3. Extract the files and un the  ```GCS.UI.exe``` executable.
 
-### Building
-#### Prerequisites
+## Building
+### Prerequisites
 - [.NET SDK 8.0](https://dotnet.microsoft.com/download/dotnet/8.0) or later
 
-#### Steps
-1. **Clone the Repository:**
+### Steps
+
+#### Clone the Repository
    ```bash
    git clone https://github.com/VeryFunnyMonkey/GamesConfigSwitcher.git
    cd GamesConfigSwitcher
    ```
    
-3. **Restore Dependencies:**
-   
+#### Restore Dependencies
    Navigate to the root directory of your project and run:
    ```bash
    dotnet restore
    ```
 
-5. **Build the Solution:**
-   
+#### Build the Solution
    To build the solution, use the following command:
    ```bash
    dotnet build --configuration Release
    ```
    
-6. **Publish the CLI Application:**
-   
+#### Publish the CLI Application
    To create a single-file executable for the CLI, run:
    ```bash
    dotnet publish GCS.CLI -r <runtime> -c Release /p:PublishSingleFile=true --output ./output/cli
    ```
    __See [here](https://learn.microsoft.com/en-us/dotnet/core/rid-catalog#known-rids) for the available runtimes__
    
-7. **Publish the UI Application (Windows Only):**
-   
+#### Publish the UI Application (Windows Only)
    To create a single-file executable for the CLI, run:
    ```bash
    dotnet publish GCS.UI -r <runtime> -c Release /p:PublishSingleFile=true --output ./output/ui
    ```
    __See [here](https://learn.microsoft.com/en-us/dotnet/core/rid-catalog#known-rids) for the available runtimes__
    
-8. **Locate the Binaries:**
-   
+#### Locate the Binaries
    After publishing, the executables will be located in the ```./output/cli``` and ```./output/ui``` directories for the CLI and UI respectively.
 
-9. **Run the Application:**
+#### Run the Application
    
    **- CLI:** Navigate to the ```./output/cli``` directory and run:
    ```bash
@@ -129,8 +225,7 @@ GCS is portable and stores no appdata files. It only creates a gameData.json fil
    ```
    **- UI:** Navigate to the ./publish/ui directory and double-click the GCS.UI.exe file to launch the UI.
 
-### Libraries and Dependencies
-
+## Libraries and Dependencies
 GCS relies on several libraries and packages to function. Below are the key libraries used:
 
 - **[Cocona](https://github.com/mayuki/Cocona):** Used for handling command-line interface commands and arguments.
@@ -139,7 +234,7 @@ GCS relies on several libraries and packages to function. Below are the key libr
 - **WinForms:** Used for building the graphical user interface for the UI (Windows Only).
 
 All necessary dependencies are restored automatically when you run `dotnet restore`. If you wish to explore or modify the dependencies, you can find them listed in the `.csproj` files of the respective projects.
-   
+
 ## TODO
 * ~~Implement unlimited profiles.~~
 * Make UI pretty.
