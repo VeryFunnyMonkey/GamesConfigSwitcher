@@ -21,10 +21,17 @@ namespace GCS.Core
             }
             else
             {
-                GameData gameData = new GameData();
-                string json = JsonConvert.SerializeObject(gameData, Formatting.Indented);
-                File.WriteAllText(jsonFilePath, json);
-                return gameData;
+                try
+                {
+                    GameData gameData = new GameData();
+                    string json = JsonConvert.SerializeObject(gameData, Formatting.Indented);
+                    File.WriteAllText(jsonFilePath, json);
+                    return gameData;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"An error occurred while creating ${jsonFilePath}: {ex.Message}");
+                }
             }
         }
 
