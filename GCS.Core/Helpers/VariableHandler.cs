@@ -6,7 +6,7 @@ namespace GCS.Core
     {
         public static void useVariable(string profile, Dictionary<string, string> Variables)
         {
-            var fileContents = File.ReadAllText(profile, Encoding.Unicode);
+            var fileContents = File.ReadAllText(profile);
 
             foreach (var kvp in Variables)
             {
@@ -18,7 +18,7 @@ namespace GCS.Core
                 }
             }
 
-            File.WriteAllText(profile, fileContents, Encoding.Unicode);
+            File.WriteAllText(profile, fileContents);
         }
     }
 }
