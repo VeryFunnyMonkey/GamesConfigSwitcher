@@ -2,7 +2,7 @@ namespace GCS.Core
 {
     public class Profile
     {
-        public string title { get; set; }
-        public string profilePath { get; set; }
+        public string Title { get; set; }
+        public List<ConfigFile> ConfigFiles { get; set; }
     }
 }
