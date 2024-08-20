@@ -97,7 +97,7 @@ namespace GCS.Core
                 var game = gameData.Games.FirstOrDefault(g => g.Title.Equals(gameTitle, StringComparison.OrdinalIgnoreCase));
                 if (game != null)
                 {
-                    if (game.Profiles != null)
+                    if (game.Profiles != null || game.Profiles.Count > 0)
                     {
                         var duplicateProfile = game.Profiles.FirstOrDefault(p => p.Title.Equals(title, StringComparison.OrdinalIgnoreCase));
 
@@ -148,7 +148,40 @@ namespace GCS.Core
             }
         }
 
-        public void EditGameData(string oldTitle, string newTitle, List<Profile> newProfiles)
+
+        public void DeleteProfile(string title, string gameTitle)
+        {
+            var gameData = LoadGameData();
+
+            if (gameData.Games == null || gameData.Games.Count == 0)
+            {
+                Console.WriteLine("No games to delete a profile from.");
+                return;
+            }
+
+            var gameToRemove = gameData.Games.FirstOrDefault(g => g.Title.Equals(gameTitle, StringComparison.OrdinalIgnoreCase));
+
+            if (gameToRemove.Profiles == null || gameToRemove.Profiles.Count == 0)
+            {
+                Console.WriteLine("No profiles to delete.");
+                return;
+            }
+
+            var profileToRemove = gameToRemove.Profiles.FirstOrDefault(p => p.Title.Equals(title, StringComparison.OrdinalIgnoreCase));
+
+            if (profileToRemove != null)
+            {
+                gameToRemove.Profiles.Remove(profileToRemove);
+                SaveGameData(gameData);
+                Console.WriteLine($"Profile '{title}' has been deleted successfully.");
+            }
+            else
+            {
+                Console.WriteLine($"Profile with the title '{title}' not found.");
+            }
+        }
+
+        public void EditGameData(string oldTitle, string newTitle, List<Profile> newProfiles) //needs fixing, add editprofile
         {
             var gameData = LoadGameData();
 

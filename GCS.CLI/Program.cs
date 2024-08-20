@@ -22,7 +22,12 @@ app.AddSubCommand("add", x =>
     x.AddCommands<AddProfileCommand>();
 });
 
-app.AddCommands<DeleteCommand>();
+app.AddSubCommand("delete", x =>
+{
+    x.AddCommands<DeleteGameCommand>();
+    x.AddCommands<DeleteProfileCommand>();
+});
+
 app.AddCommands<UseCommand>();
 app.AddCommands<UseAllCommand>();
 app.AddCommands<EditCommand>();
