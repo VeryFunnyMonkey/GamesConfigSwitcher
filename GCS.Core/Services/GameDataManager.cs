@@ -48,7 +48,7 @@ namespace GCS.Core
             }
         }
 
-        public void AddGameData(string title, string configPath, List<Profile> profiles)
+        public void AddGameData(string title, List<Profile>? profiles = null)
         {
             var gameData = LoadGameData();
 
@@ -63,27 +63,65 @@ namespace GCS.Core
                 return;
             }
 
-            var duplicateProfiles = profiles.GroupBy(p => p.title, StringComparer.OrdinalIgnoreCase)
-                                .Where(g => g.Count() > 1)
-                                .Select(g => g.Key)
-                                .ToList();
-
-            if (duplicateProfiles.Count != 0)
+            if (profiles != null)
             {
-                Console.WriteLine($"Duplicate profile titles found: {string.Join(", ", duplicateProfiles)}. Please ensure each profile has a unique title.");
-                return;
+                var duplicateProfiles = profiles.GroupBy(p => p.Title, StringComparer.OrdinalIgnoreCase)
+                                    .Where(g => g.Count() > 1)
+                                    .Select(g => g.Key)
+                                    .ToList();
+                
+                if (duplicateProfiles.Count != 0)
+                {
+                    Console.WriteLine($"Duplicate profile titles found: {string.Join(", ", duplicateProfiles)}. Please ensure each profile has a unique title.");
+                    return;
+                }
             }
 
             var newGame = new Game
             {
                 Title = title,
-                configPath = configPath,
-                Profiles = profiles
+                Profiles = profiles ?? new List<Profile>()
             };
 
             gameData.Games.Add(newGame);
             SaveGameData(gameData);
             Console.WriteLine($"Game '{title}' added successfully.");
+        }
+
+        public void AddProfile(string title, string gameTitle, Profile profile)
+        {
+            var gameData = LoadGameData();
+
+            if (gameData.Games != null)
+            {
+                var game = gameData.Games.FirstOrDefault(g => g.Title.Equals(gameTitle, StringComparison.OrdinalIgnoreCase));
+                if (game != null)
+                {
+                    if (game.Profiles != null)
+                    {
+                        var duplicateProfile = game.Profiles.FirstOrDefault(p => p.Title.Equals(title, StringComparison.OrdinalIgnoreCase));
+
+                        if (duplicateProfile != null)
+                        {
+                            Console.WriteLine($"Profile with title '{title}' already exists for game '{gameTitle}', please ensure each profile has a unique title.");
+                            return;
+                        }
+                    }
+                    game.Profiles.Add(profile);
+                    SaveGameData(gameData);
+                    Console.WriteLine($"Profile '{title}' added to game '{gameTitle}' successfully.");
+                    
+                }
+                else
+                {
+                    Console.WriteLine($"Game with the title '{gameTitle}' not found.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No games found.");
+            }
+
         }
 
         public void DeleteGameData(string title)
@@ -110,7 +148,7 @@ namespace GCS.Core
             }
         }
 
-        public void EditGameData(string oldTitle, string newTitle, string newConfigPath, List<Profile> newProfiles)
+        public void EditGameData(string oldTitle, string newTitle, List<Profile> newProfiles)
         {
             var gameData = LoadGameData();
 
@@ -130,7 +168,7 @@ namespace GCS.Core
                     return;
                 }
 
-                var duplicateProfiles = newProfiles.GroupBy(p => p.title, StringComparer.OrdinalIgnoreCase)
+                var duplicateProfiles = newProfiles.GroupBy(p => p.Title, StringComparer.OrdinalIgnoreCase)
                                     .Where(g => g.Count() > 1)
                                     .Select(g => g.Key)
                                     .ToList();
@@ -142,7 +180,6 @@ namespace GCS.Core
                 }
 
                 gameToEdit.Title = newTitle;
-                gameToEdit.configPath = newConfigPath;
                 gameToEdit.Profiles = newProfiles;
 
                 SaveGameData(gameData);
