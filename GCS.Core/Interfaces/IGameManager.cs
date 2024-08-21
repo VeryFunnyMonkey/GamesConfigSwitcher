@@ -8,6 +8,7 @@ namespace GCS.Core
         void AddProfile(string title, string gameTitle, Profile profile);
         void DeleteGameData(string title);
         void DeleteProfile(string title, string gameTitle);
-        void EditGameData(string oldTitle, string newTitle, List<Profile> newProfiles);
+        void EditGameData(string oldTitle, string newTitle);
+        void EditProfile(string oldTitle, string gameTitle, Profile profile);
     }
 }

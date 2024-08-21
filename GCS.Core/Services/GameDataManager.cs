@@ -181,7 +181,7 @@ namespace GCS.Core
             }
         }
 
-        public void EditGameData(string oldTitle, string newTitle, List<Profile> newProfiles) //needs fixing, add editprofile
+        public void EditGameData(string oldTitle, string newTitle)
         {
             var gameData = LoadGameData();
 
@@ -201,19 +201,7 @@ namespace GCS.Core
                     return;
                 }
 
-                var duplicateProfiles = newProfiles.GroupBy(p => p.Title, StringComparer.OrdinalIgnoreCase)
-                                    .Where(g => g.Count() > 1)
-                                    .Select(g => g.Key)
-                                    .ToList();
-
-                if (duplicateProfiles.Count != 0)
-                {
-                    Console.WriteLine($"Duplicate profile titles found: {string.Join(", ", duplicateProfiles)}. Please ensure each profile has a unique title.");
-                    return;
-                }
-
                 gameToEdit.Title = newTitle;
-                gameToEdit.Profiles = newProfiles;
 
                 SaveGameData(gameData);
                 Console.WriteLine($"Game '{oldTitle}' has been updated successfully.");
@@ -222,6 +210,58 @@ namespace GCS.Core
             {
                 Console.WriteLine($"Game with the title '{oldTitle}' not found.");
             }
+        }
+
+        public void EditProfile(string oldTitle, string gameTitle, Profile profile)
+        {
+            var gameData = LoadGameData();
+
+            if (gameData.Games != null)
+            {
+                var game = gameData.Games.FirstOrDefault(g => g.Title.Equals(gameTitle, StringComparison.OrdinalIgnoreCase));
+                if (game != null)
+                {
+                    if (game.Profiles != null || game.Profiles.Count > 0)
+                    {
+                        var profileToEdit = game.Profiles.FirstOrDefault(p => p.Title.Equals(oldTitle, StringComparison.OrdinalIgnoreCase));
+
+                        if (profileToEdit != null)
+                        {
+                            if (game.Profiles.Any(p => p.Title.Equals(profile.Title, StringComparison.OrdinalIgnoreCase) && !p.Title.Equals(oldTitle, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                Console.WriteLine($"A game with the title '{profile.Title}' already exists.");
+                                return;
+                            }
+
+                            profileToEdit.Title = profile.Title;
+                            profileToEdit.ConfigFiles = profile.ConfigFiles ?? profileToEdit.ConfigFiles;
+
+                            SaveGameData(gameData);
+                            Console.WriteLine($"Profile '{oldTitle}' has been updated successfully.");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Profile with the title '{oldTitle}' not found.");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"No profiles to edit.");
+                        return;
+                    }
+                    
+                }
+                else
+                {
+                    Console.WriteLine($"Game with the title '{gameTitle}' not found.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No games found.");
+            }
+
         }
     }
 }
