@@ -48,12 +48,6 @@ jobs:
       run: dotnet test --no-build --verbosity normal --configuration Release
     - name: Publish single-file executable
       run: dotnet publish GCS.CLI -r ${{ matrix.runtime }} -c Release /p:PublishSingleFile=true --self-contained --output ./output/${{ matrix.runtime }}
-    
-    - name: Publish and Zip UI artifacts (Windows Only)
-      if: matrix.runtime == 'win-x64'
-      run: |
-        dotnet publish GCS.UI -r ${{ matrix.runtime }} -c Release /p:PublishSingleFile=true --self-contained --output ./output/${{ matrix.runtime }}-ui
-        cd ./output && zip -r GCS-UI-${{ github.ref_name }}.zip ${{ matrix.runtime }}-ui
 
     - name: Determine file extension
       id: file_ext
@@ -74,15 +68,3 @@ jobs:
         asset_path: ./output/${{ matrix.runtime }}/gcs${{ env.file_ext }}
         asset_name: gcs-${{ matrix.runtime }}${{ env.file_ext }}
         asset_content_type: application/octet-stream
-
-    - name: Upload UI Asset
-      if: matrix.runtime == 'win-x64'
-      id: upload-ui-asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.once.outputs.upload_url }}
-        asset_path: ./output/GCS-UI-${{github.ref_name}}.zip
-        asset_name: GCS-UI-${{github.ref_name}}.zip
-        asset_content_type: application/zip
