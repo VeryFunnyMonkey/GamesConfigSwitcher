@@ -18,7 +18,6 @@ namespace GCS.CLI
             [Argument(Description = "The title of the game")] string game,
             [Option('s', Description = "The source config file to be copied to the destination")] List<string> source,
             [Option('d', Description = "The config file that will be replaced by the source config file (usually the games config file)")] List<string> destination
-        // ^^ not a huge fan of this, look at making an argument in the future so users dont have to use ""
         )
 
         {
@@ -53,7 +52,7 @@ namespace GCS.CLI
                 }
             }
 
-            _gameManager.AddProfile(title, game, new Profile { Title = title, ConfigFiles = configFiles });
+            _gameManager.AddProfile(title, game, configFiles);
         }
     }
 }

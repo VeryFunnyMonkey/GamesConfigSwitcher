@@ -104,13 +104,13 @@ namespace GCS.Core
             Console.WriteLine($"Game '{title}' added successfully.");
         }
 
-        public void AddProfile(string title, string gameTitle, Profile profile)
+        public void AddProfile(string title, string gameTitle, List<ConfigFile> configFiles)
         {
             var gameData = LoadGameData();
 
             if (gameData.Games != null)
             {
-                var game = GetGame(gameTitle);
+                var game = gameData.Games?.FirstOrDefault(g => g.Title.Equals(gameTitle, StringComparison.OrdinalIgnoreCase));
                 if (game != null)
                 {
                     if (game.Profiles != null || game.Profiles.Count > 0)
@@ -123,7 +123,14 @@ namespace GCS.Core
                             return;
                         }
                     }
-                    game.Profiles.Add(profile);
+
+                    var newProfile = new Profile
+                    {
+                        Title = title,
+                        ConfigFiles = configFiles
+                    };
+
+                    game.Profiles.Add(newProfile);
                     SaveGameData(gameData);
                     Console.WriteLine($"Profile '{title}' added to game '{gameTitle}' successfully.");
                     
@@ -207,7 +214,7 @@ namespace GCS.Core
                 return;
             }
 
-            var gameToEdit = GetGame(oldTitle);
+            var gameToEdit = gameData.Games?.FirstOrDefault(g => g.Title.Equals(oldTitle, StringComparison.OrdinalIgnoreCase));
 
             if (gameToEdit != null)
             {
@@ -234,7 +241,7 @@ namespace GCS.Core
 
             if (gameData.Games != null)
             {
-                var game = GetGame(gameTitle);
+                var game = gameData.Games?.FirstOrDefault(g => g.Title.Equals(gameTitle, StringComparison.OrdinalIgnoreCase));
                 if (game != null)
                 {
                     if (game.Profiles != null || game.Profiles.Count > 0)
