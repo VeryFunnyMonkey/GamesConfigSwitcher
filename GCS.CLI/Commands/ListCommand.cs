@@ -11,8 +11,8 @@ namespace GCS.CLI
             _gameManager = gameManager;
         }
 
-        [Command ("list", Description = "Lists all games and their profiles.")]
-        public async Task List()
+        [Command("list", Description = "Lists all games and their profiles.")]
+        public void List()
         {
             var gameData = _gameManager.LoadGameData();
 
@@ -34,7 +34,7 @@ namespace GCS.CLI
                     }
                     else
                     {
-                        Console.WriteLine("  No profiles found.");  
+                        Console.WriteLine("  No profiles found.");
                     }
                     Console.WriteLine();
                 }

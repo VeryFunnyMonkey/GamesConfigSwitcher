@@ -11,17 +11,23 @@ namespace GCS.CLI
             _gameManager = gameManager;
         }
 
-        [Command ("profile", Description = "edit an existing game.")]
-        public async Task EditProfile
+        [Command("profile", Description = "edit an existing game.")]
+        public void EditProfile
         (
-            [Argument(Description = "The new title of the profile")] string title,
-            [Option('g', Description = "The title of the game")] string game,
-            [Option('p', Description = "The old title of the profile you want to update")] string profile,
+            [Argument(Description = "The title of the profile")] string currentTitle,
+            [Argument(Description = "The title of the game")] string game,
             [Option('s', Description = "The source config file to be copied to the destination")] List<string>? source,
-            [Option('d', Description = "The config file that will be replaced by the source config file (usually the games config file)")] List<string>? destination 
+            [Option('d', Description = "The config file that will be replaced by the source config file (usually the games config file)")] List<string>? destination,
+            [Option('t', Description = "The new title of the profile")] string? title = null
         )
 
         {
+            if (source == null && destination == null && title == null)
+            {
+                Console.WriteLine("No options provided to edit the profile. Please provide at least one option.");
+                return;
+            }
+
             var configFiles = new List<ConfigFile>();
             if (source != null & destination != null)
             {
@@ -50,7 +56,7 @@ namespace GCS.CLI
                     }
                     else
                     {
-                        configFiles.Add(new ConfigFile {SourceFile = configSource, DestinationFile = configDest});
+                        configFiles.Add(new ConfigFile { SourceFile = configSource, DestinationFile = configDest });
                     }
                 }
             }
@@ -58,8 +64,8 @@ namespace GCS.CLI
             {
                 configFiles = null;
             }
-            
-            _gameManager.EditProfile(profile, game, new Profile { Title = title, ConfigFiles = configFiles });
+
+            _gameManager.EditProfile(currentTitle, game, new Profile { Title = title, ConfigFiles = configFiles });
         }
     }
 }

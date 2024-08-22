@@ -11,14 +11,14 @@ namespace GCS.CLI
             _gameManager = gameManager;
         }
 
-        [Command ("profile", Description = "Adds a new profile to a game.")]
-        public async Task AddProfile
-        (            
+        [Command("profile", Description = "Adds a new profile to a game.")]
+        public void AddProfile
+        (
             [Argument(Description = "The title of the profile")] string title,
-            [Option('g', Description = "The title of the game")] string game,
+            [Argument(Description = "The title of the game")] string game,
             [Option('s', Description = "The source config file to be copied to the destination")] List<string> source,
-            [Option('d', Description = "The config file that will be replaced by the source config file (usually the games config file)")] List<string> destination 
-            // ^^ not a huge fan of this, look at making an argument in the future so users dont have to use ""
+            [Option('d', Description = "The config file that will be replaced by the source config file (usually the games config file)")] List<string> destination
+        // ^^ not a huge fan of this, look at making an argument in the future so users dont have to use ""
         )
 
         {
@@ -27,7 +27,7 @@ namespace GCS.CLI
                 Console.WriteLine($"Non-matching number of config file locations, source: {source.Count}, destination: {destination.Count}");
                 return;
             }
-            
+
             var configFiles = new List<ConfigFile>();
 
             for (var i = 0; i < source.Count; i++)
@@ -49,10 +49,10 @@ namespace GCS.CLI
                 }
                 else
                 {
-                    configFiles.Add(new ConfigFile {SourceFile = configSource, DestinationFile = configDest});
+                    configFiles.Add(new ConfigFile { SourceFile = configSource, DestinationFile = configDest });
                 }
             }
-            
+
             _gameManager.AddProfile(title, game, new Profile { Title = title, ConfigFiles = configFiles });
         }
     }

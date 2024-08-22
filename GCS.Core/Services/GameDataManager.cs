@@ -48,6 +48,22 @@ namespace GCS.Core
             }
         }
 
+        public Game? GetGame(string title)
+        {
+            var gameData = LoadGameData();
+            
+            return gameData.Games?.FirstOrDefault(g => g.Title.Equals(title, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public Profile? GetProfile(string title, string gameTitle)
+        {
+            var gameData = LoadGameData();
+            
+            var game = gameData.Games?.FirstOrDefault(g => g.Title.Equals(gameTitle, StringComparison.OrdinalIgnoreCase));
+
+            return game?.Profiles?.FirstOrDefault(g => g.Title.Equals(title, StringComparison.OrdinalIgnoreCase));
+        }
+
         public void AddGameData(string title, List<Profile>? profiles = null)
         {
             var gameData = LoadGameData();
@@ -83,7 +99,7 @@ namespace GCS.Core
                 Profiles = profiles ?? new List<Profile>()
             };
 
-            gameData.Games.Add(newGame);
+            gameData.Games?.Add(newGame);
             SaveGameData(gameData);
             Console.WriteLine($"Game '{title}' added successfully.");
         }
@@ -94,7 +110,7 @@ namespace GCS.Core
 
             if (gameData.Games != null)
             {
-                var game = gameData.Games.FirstOrDefault(g => g.Title.Equals(gameTitle, StringComparison.OrdinalIgnoreCase));
+                var game = GetGame(gameTitle);
                 if (game != null)
                 {
                     if (game.Profiles != null || game.Profiles.Count > 0)
@@ -134,7 +150,7 @@ namespace GCS.Core
                 return;
             }
 
-            var gameToRemove = gameData.Games.FirstOrDefault(g => g.Title.Equals(title, StringComparison.OrdinalIgnoreCase));
+            var gameToRemove = GetGame(title);
 
             if (gameToRemove != null)
             {
@@ -159,9 +175,9 @@ namespace GCS.Core
                 return;
             }
 
-            var gameToRemove = gameData.Games.FirstOrDefault(g => g.Title.Equals(gameTitle, StringComparison.OrdinalIgnoreCase));
+            var gameToRemove = GetGame(gameTitle);
 
-            if (gameToRemove.Profiles == null || gameToRemove.Profiles.Count == 0)
+            if (gameToRemove?.Profiles == null || gameToRemove.Profiles.Count == 0)
             {
                 Console.WriteLine("No profiles to delete.");
                 return;
@@ -191,11 +207,11 @@ namespace GCS.Core
                 return;
             }
 
-            var gameToEdit = gameData.Games.FirstOrDefault(g => g.Title.Equals(oldTitle, StringComparison.OrdinalIgnoreCase));
+            var gameToEdit = GetGame(oldTitle);
 
             if (gameToEdit != null)
             {
-                if (gameData.Games.Any(g => g.Title.Equals(newTitle, StringComparison.OrdinalIgnoreCase) && !g.Title.Equals(oldTitle, StringComparison.OrdinalIgnoreCase)))
+                if (GetGame(newTitle) != null)
                 {
                     Console.WriteLine($"A game with the title '{newTitle}' already exists.");
                     return;
@@ -218,7 +234,7 @@ namespace GCS.Core
 
             if (gameData.Games != null)
             {
-                var game = gameData.Games.FirstOrDefault(g => g.Title.Equals(gameTitle, StringComparison.OrdinalIgnoreCase));
+                var game = GetGame(gameTitle);
                 if (game != null)
                 {
                     if (game.Profiles != null || game.Profiles.Count > 0)
@@ -233,7 +249,7 @@ namespace GCS.Core
                                 return;
                             }
 
-                            profileToEdit.Title = profile.Title;
+                            profileToEdit.Title = profile.Title ?? profileToEdit.Title;
                             profileToEdit.ConfigFiles = profile.ConfigFiles ?? profileToEdit.ConfigFiles;
 
                             SaveGameData(gameData);

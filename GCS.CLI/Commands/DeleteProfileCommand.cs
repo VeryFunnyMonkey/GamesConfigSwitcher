@@ -11,11 +11,11 @@ namespace GCS.CLI
             _gameManager = gameManager;
         }
 
-        [Command ("profile", Description = "Deletes a profile from a game.")]
-        public async Task DeleteProfile
+        [Command("profile", Description = "Deletes a profile from a game.")]
+        public void DeleteProfile
         (
-            [Argument(Description = "The title of the game")] string title,
-            [Option('g', Description = "The title of the game")] string game
+            [Argument(Description = "The title of the profile")] string title,
+            [Argument(Description = "The title of the game")] string game
         )
         {
             _gameManager.DeleteProfile(title, game);

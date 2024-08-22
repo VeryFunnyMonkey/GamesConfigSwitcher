@@ -11,8 +11,8 @@ namespace GCS.CLI
             _gameManager = gameManager;
         }
 
-        [Command ("game", Description = "Deletes a game.")]
-        public async Task DeleteGame
+        [Command("game", Description = "Deletes a game.")]
+        public void DeleteGame
         (
             [Argument(Description = "The title of the game")] string title
         )

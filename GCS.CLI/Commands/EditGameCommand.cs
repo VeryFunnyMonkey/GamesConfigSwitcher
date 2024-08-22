@@ -11,15 +11,15 @@ namespace GCS.CLI
             _gameManager = gameManager;
         }
 
-        [Command ("game", Description = "edit an existing game.")]
-        public async Task EditGame
+        [Command("game", Description = "edit an existing game.")]
+        public void EditGame
         (
-            [Argument(Description = "The new title of the game")] string title,
-            [Option('g', Description = "The old title of the game you want to update")] string game          
+            [Argument(Description = "The title of the game")] string oldTitle,
+            [Argument(Description = "The new title of the game")] string newTitle
         )
 
         {
-            _gameManager.EditGameData(game, title);
+            _gameManager.EditGameData(oldTitle, newTitle);
         }
     }
 }

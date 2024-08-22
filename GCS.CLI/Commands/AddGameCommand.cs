@@ -11,9 +11,9 @@ namespace GCS.CLI
             _gameManager = gameManager;
         }
 
-        [Command ("game", Description = "Adds a new game.")]
-        public async Task AddGame
-        (            
+        [Command("game", Description = "Adds a new game.")]
+        public void AddGame
+        (
             [Argument(Description = "The title of the game")] string title
         )
 
