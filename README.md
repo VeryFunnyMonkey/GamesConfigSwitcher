@@ -1,5 +1,7 @@
 # Game Config Switcher (GCS)
 
+**⚠️ NOTE: As of version 1.3 the UI has been removed, it can still be used as apart of v1.2.1.1 & under**
+
 ## Table of Contents
 - [Overview](#overview)
 - [Features](#features)
@@ -59,7 +61,6 @@ To list out the commands, and see their usage, run:
 ```bash
 .\gcs --help
 ```
-#### Commands
 #### Commands
 
 - **Add**
@@ -236,8 +237,4 @@ GCS relies on several libraries and packages to function. Below are the key libr
 All necessary dependencies are restored automatically when you run `dotnet restore`. If you wish to explore or modify the dependencies, you can find them listed in the `.csproj` files of the respective projects.
 
 ## TODO
-* ~~Implement unlimited profiles.~~
-* Make UI pretty.
-* ~~Create a json file if one is not present.~~
-* ~~Implement a feature that can swap variables within the config file with a value (good for changing resolution settings in a game's config file).~~
-* Eventually add the ability to have multiple different config files. This is not in the scope currently, but would be a nice to have in the future.
+* Remake the UI in Avalonia
