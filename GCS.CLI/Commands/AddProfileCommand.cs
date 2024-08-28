@@ -17,13 +17,13 @@ namespace GCS.CLI
             [Argument(Description = "The title of the profile")] string title,
             [Argument(Description = "The title of the game")] string game,
             [Option('s', Description = "The source config file to be copied to the destination")] List<string> source,
-            [Option('d', Description = "The config file that will be replaced by the source config file (usually the games config file)")] List<string> destination
+            [Option('d', Description = "The config file that will be replaced by the source config file (usually the games config file)")] List<string> dest
         )
 
         {
-            if (source.Count != destination.Count)
+            if (source.Count != dest.Count)
             {
-                Console.WriteLine($"Non-matching number of config file locations, source: {source.Count}, destination: {destination.Count}");
+                Console.WriteLine($"Non-matching number of config file locations, source: {source.Count}, destination: {dest.Count}");
                 return;
             }
 
@@ -33,7 +33,7 @@ namespace GCS.CLI
             {
                 var configSource = source[i];
 
-                var configDest = destination[i];
+                var configDest = dest[i];
 
                 if (!PathValidator.IsValidWindowsFilePath(configSource))
                 {

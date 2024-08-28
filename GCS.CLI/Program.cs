@@ -2,10 +2,13 @@ using Cocona;
 using GCS.CLI;
 using GCS.Core;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 var builder = CoconaApp.CreateBuilder();
 
-builder.Services.AddSingleton<ILogger, ConsoleLogger>();
+builder.Logging.ClearProviders();
+// TODO: Add file logging
+builder.Services.AddSingleton<ILoggingHandler, ConsoleLogger>();
 
 // Register IGameDataManager as a singleton service
 builder.Services.AddSingleton<IGameDataManager>(provider =>
@@ -13,7 +16,7 @@ builder.Services.AddSingleton<IGameDataManager>(provider =>
     // Set the path to the JSON file as needed
     var jsonFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "gameData.json");
 
-    var logger = provider.GetRequiredService<ILogger>();
+    var logger = provider.GetRequiredService<ILoggingHandler>();
     return new GameDataManager(jsonFilePath, logger);
 });
 
