@@ -2,8 +2,17 @@
 
 namespace GCS.Core
 {
-    public class GameDataManager(string jsonFilePath) : IGameDataManager
+    public class GameDataManager : IGameDataManager
     {
+        private readonly string jsonFilePath;
+        private readonly ILogger logger;
+        
+        public GameDataManager(string jsonFilePath, ILogger logger)
+        {
+            this.jsonFilePath = jsonFilePath;
+            this.logger = logger;
+        }
+
         public GameData LoadGameData()
         {
             if (File.Exists(jsonFilePath))
@@ -75,7 +84,7 @@ namespace GCS.Core
 
             if (gameData.Games != null && gameData.Games.Any(g => g.Title.Equals(title, StringComparison.OrdinalIgnoreCase)))
             {
-                Console.WriteLine($"A game with the title '{title}' already exists.");
+                logger.LogError($"A game with the title '{title}' already exists.");
                 return;
             }
 

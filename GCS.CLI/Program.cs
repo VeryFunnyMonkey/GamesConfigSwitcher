@@ -5,12 +5,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 var builder = CoconaApp.CreateBuilder();
 
+builder.Services.AddSingleton<ILogger, ConsoleLogger>();
+
 // Register IGameDataManager as a singleton service
 builder.Services.AddSingleton<IGameDataManager>(provider =>
 {
     // Set the path to the JSON file as needed
     var jsonFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "gameData.json");
-    return new GameDataManager(jsonFilePath);
+
+    var logger = provider.GetRequiredService<ILogger>();
+    return new GameDataManager(jsonFilePath, logger);
 });
 
 var app = builder.Build();
