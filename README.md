@@ -1,6 +1,6 @@
 # Game Config Switcher (GCS)
 
-**⚠️ NOTE: As of version 1.3 the UI has been removed, it can still be used as apart of v1.2.1.1 & under**
+**⚠️⚠️⚠️ NOTE: As of version 1.3 the UI has been removed, it can still be used as apart of v1.2.1.1 & under I have left references to it on the README for now, but they will be removed soon.⚠️⚠️⚠️**
 
 ## Table of Contents
 - [Overview](#overview)
