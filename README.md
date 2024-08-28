@@ -1,5 +1,7 @@
 # Game Config Switcher (GCS)
 
+**⚠️⚠️⚠️ NOTE: As of version 1.3 the UI has been removed, it can still be used as apart of v1.2.1.1 & under I have left references to it on the README for now, but they will be removed soon.⚠️⚠️⚠️**
+
 ## Table of Contents
 - [Overview](#overview)
 - [Features](#features)
@@ -23,6 +25,7 @@
     - [Locate the Binaries](#locate-the-binaries)
     - [Run the Application](#run-the-application)
 - [Libraries and Dependencies](#libraries-and-dependencies)
+- [Known Issues](#known-issues)
 - [TODO](#todo)
 
 ## Overview
@@ -36,8 +39,8 @@ Easily Copy Game Config File Profiles via UI or CLI
 **GCS** is a tool designed to alleviate the hassle of manually adjusting in-game resolutions when switching between multiple monitors (e.g., TV, PC Monitor, Moonlight Streaming). Some games fail to automatically adjust the resolution to the correct monitor, forcing you to change settings manually. GCS solves this problem by allowing you to easily swap out game config files using either a graphical interface or the command line. You can further automate this process with tools like AutoHotkey (AHK).
 
 ## Features
-- **Swap Config Files:** Easily switch between different config files using a UI or CLI.
 - **Multiple Profiles:** Create and manage multiple game profiles for different use cases.
+- **Variables:** Define variables within the source file, and replacing it with whatever value is defined at runtime. See [variables](#variables) for more info.
 
 ## Usage
 _Both the CLI and UI share the same JSON file for storing game data, so you can switch between them seamlessly. The UI is primarily designed for adding and managing games, while the CLI is ideal for quickly applying profiles._
@@ -46,9 +49,7 @@ _Both the CLI and UI share the same JSON file for storing game data, so you can 
 A game profile consists of the following:
 
   - **Game Title:** The name of the game.
-  - **Config Path:** The path to the game's main config file. For example, for Skyrim, this would be:
-    ```\users\username\My Documents\My Games\Skyrim\skyrimprefs.ini```
-  - **Profiles:** - the file that will replace the file in the Config Path
+  - **Profiles:** - the source and destination pairs that will be replaced when the ``use`` command is run.
 
 ### CLI
 You can execute commands by running the binary in a terminal, using: 
@@ -60,43 +61,78 @@ To list out the commands, and see their usage, run:
 .\gcs --help
 ```
 #### Commands
-#### Commands
 
-- **Add**
-  - **Description:** Adds a new game with its configuration path and profiles. You must have at least 1 profile, but can have as many profiles as you need.
+- **Add Game**
+  - **Description:** Adds a new game.
   - Syntax
     ```bash
-    .\gcs add -t "Game Title" -c "Game Config File" -p "<profileTitle profilePath>" -p "<profileTitle profilePath>"
+    .\gcs add game "Game Title"
     ```
   - **Usage Example:**
     ```bash
-    .\gcs add -t "Skyrim" -c "\users\username\My Documents\My Games\Skyrim\skyrimprefs.ini" -p "Profile1 C:\Path\To\Profile1.ini" -p "Profile2 C:\Path\To\Profile2.ini"
+    .\gcs add game "Skyrim"
     ```
-  - **Explanation:** This command adds a game titled "Skyrim" with the given configuration path and two profiles: "Profile1" and "Profile2", each with its own path.
+  - **Explanation:** This command adds a game titled "Skyrim".
 
-- **Delete**
+  - **Add Profile**
+  - **Description:** Adds a new profile to a game, with source and destination configuration paths. You must have at least 1 pair of source & destination paths, but can have as many pairs as you need.
+  - Syntax
+    ```bash
+    .\gcs add profile "Profile Title" "Game Title" -s "<Path To Be Copied To Config File Destination>" -d "<Config File Destination>"
+    ```
+  - **Usage Example:**
+    ```bash
+    .\gcs add profile "tv" "Skyrim" -s "C:\Path\To\Profile1.ini" -d "\users\username\My Documents\My Games\Skyrim\skyrimprefs.ini"
+    ```
+  - **Explanation:** This command adds a profile titled "tv" to the game "Skyrim", with 1 source and destination pair. "Profile1" will be copied to the destination when the ```use``` command is run.
+
+- **Delete Game**
   - **Description:** Deletes an existing game from the configuration.
   - Syntax
     ```bash
-    .\gcs delete -t "Game Title"
+    .\gcs delete game "Game Title"
     ```
   - **Usage Example:**
     ```bash
-    .\gcs delete -t "Skyrim"
+    .\gcs delete game "Skyrim"
     ```
   - **Explanation:** This command deletes the game titled "Skyrim" from the configuration.
 
-- **Edit**
-  - **Description:** Edits an existing game’s title, configuration path, or profiles.
-  - **Syntax:**
+- **Delete Profile**
+  - **Description:** Deletes an existing profile from a game.
+  - Syntax
     ```bash
-    .\gcs edit -o "Old Game Title" -t "New Title" -c "New Game Config Path" -p "NewProfileTitle NewProfilePath"
+    .\gcs delete profile "Profile Title" "Game Title"
     ```
   - **Usage Example:**
     ```bash
-    .\gcs edit -o "Skyrim" -t "Skyrim SE" -c "\users\username\My Documents\My Games\Skyrim Special Edition\skyrimprefs.ini" -p "Profile1 C:\Path\To\NewProfile1.ini"
+    .\gcs delete "tv" "Skyrim"
     ```
-  - **Explanation:** This command changes the title of "Skyrim" to "Skyrim SE", updates the configuration path, and edits "Profile1" with a new path.
+  - **Explanation:** This command deletes the profile titled "tv" from the game titled "Skyrim".
+
+- **Edit Game**
+  - **Description:** Edits an existing game’s title.
+  - **Syntax:**
+    ```bash
+    .\gcs edit "Old Game Title" "New Title"
+    ```
+  - **Usage Example:**
+    ```bash
+    .\gcs edit "Skyrim" "Skyrim SE"
+    ```
+  - **Explanation:** This command changes the title of "Skyrim" to "Skyrim SE".
+
+- **Edit Profile**
+  - **Description:** Edits an existing profile's title, source path, or destination path. Each option is optional, but at least 1 must be supplied.
+  - **Syntax:**
+    ```bash
+    .\gcs edit "Profile Title" "Game Title" -t "New Profile Title" -s "New Source Path" -d "New Destination Path"
+    ```
+  - **Usage Example:**
+    ```bash
+    .\gcs edit "tv" "Skyrim SE" -t "pc" -s "C:\Path\To\NewProfile1.ini" -d "\users\username\My Documents\My Games\Skyrim Special Edition\skyrimprefs.ini"
+    ```
+  - **Explanation:** This command changes the title of the profile to to "pc" and updates the profile's source path and destination path.
 
 - **List**
   - **Description:** Lists all games and their profiles along with the configuration paths.
@@ -111,35 +147,35 @@ To list out the commands, and see their usage, run:
   - **Explanation:** This command lists all stored games, their configuration paths, and associated profiles.
 
 - **Use**
-  - **Description:** Copies the selected profile to the game's configuration path. [variables](#variables) are optional.
+  - **Description:** Copies the selected profile's source path file to the profile's destination path file. [variables](#variables) are optional.
   - **Syntax:**
     ```bash
-    .\gcs use -t "Game Title" -p "Profile Title" -v "variable:value"
+    .\gcs use "Game Title" "Profile Title" -v "variable:value"
     ```
   - **Usage Example:**
     ```bash
-    .\gcs use -t "Skyrim" -p "Profile1" -v "x:3840" -v "y:2160"
+    .\gcs use "Skyrim" "Profile1" -v "x:3840" -v "y:2160"
     ```
-  - **Explanation:** This command copies "Profile1" for "Skyrim" to its configuration path, replacing variables `x` and `y` with `3840` and `2160` respectively.
+  - **Explanation:** This command copies "Profile1" for "Skyrim" to its destination path file, replacing variables `x` and `y` with `3840` and `2160` respectively.
 
 - **UseAll**
-  - **Description:** Copies the matching profiles for all games to their respective configuration paths. [variables](#variables) are optional.
+  - **Description:** Copies the matching profiles for all games to their destination path file. [variables](#variables) are optional.
   - **Syntax:**
     ```bash
-    .\gcs useall -p "Profile Title" -v "variable:value"
+    .\gcs useall "Profile Title" -v "variable:value"
     ```
   - **Usage Example:**
     ```bash
-    .\gcs useall -p "Profile1" -v "x:3840" -v "y:2160"
+    .\gcs useall "Profile1" -v "x:3840" -v "y:2160"
     ```
-  - **Explanation:** This command copies "Profile1" for all games to their configuration paths, replacing variables `x` and `y` with `3840` and `2160` respectively.
+  - **Explanation:** This command copies "Profile1" for all games to their their destination path file, replacing variables `x` and `y` with `3840` and `2160` respectively.
 
 #### Variables
 _Currently only available in CLI_
 
 When using the ```use``` or ```useall``` command, you can optionally pass in the ```--variable -v``` option to use the variables function.
-It works by finding a variable within the profile file, and replacing it with whatever value is defined at runtime.
-Variables are defined in the profile file using the following format: ```${variable}```
+It works by finding a variable within the source file, and replacing it with whatever value is defined at runtime.
+Variables are defined in the source file using the following format: ```${variable}```
 When the ```--variable -v``` option is used, you can define the name of the variable and the value in the following format: ```variable:value```
 
 ***Example:***
@@ -156,7 +192,7 @@ x: ${x}
 y: ${y}
 ```
 Then using the following command, you can set the games resolution at runtime:
-```.\gcs use -t myGame -p tv -v x:3840 -v y:2160```
+```.\gcs use myGame tv -v x:3840 -v y:2160```
 This will set the x & y value to 3840 & 2160 respectively.
 
 ### UI (Windows Only)
@@ -231,13 +267,13 @@ GCS relies on several libraries and packages to function. Below are the key libr
 - **[Cocona](https://github.com/mayuki/Cocona):** Used for handling command-line interface commands and arguments.
 - **Newtonsoft.Json:** Used for handling JSON serialization and deserialization.
 - **Microsoft.Extensions.DependencyInjection:** Provides dependency injection capabilities for the application (currently only used in CLI).
+- **Microsoft.Extensions.Logging:** Provides logging capabilities for the application (File logging to come in future update).
 - **WinForms:** Used for building the graphical user interface for the UI (Windows Only).
 
 All necessary dependencies are restored automatically when you run `dotnet restore`. If you wish to explore or modify the dependencies, you can find them listed in the `.csproj` files of the respective projects.
 
+## Known Issues
+* None, raise a issue if you find one :)
+
 ## TODO
-* ~~Implement unlimited profiles.~~
-* Make UI pretty.
-* ~~Create a json file if one is not present.~~
-* ~~Implement a feature that can swap variables within the config file with a value (good for changing resolution settings in a game's config file).~~
-* Eventually add the ability to have multiple different config files. This is not in the scope currently, but would be a nice to have in the future.
+* Remake the UI in Avalonia

@@ -11,8 +11,8 @@ namespace GCS.CLI
             _gameManager = gameManager;
         }
 
-        [Command ("list", Description = "Lists all games and their profiles.")]
-        public async Task List()
+        [Command("list", Description = "Lists all games and their profiles.")]
+        public void List()
         {
             var gameData = _gameManager.LoadGameData();
 
@@ -21,10 +21,20 @@ namespace GCS.CLI
                 foreach (var game in gameData.Games)
                 {
                     Console.WriteLine($"Title: {game.Title}");
-                    Console.WriteLine($"  Config Path: {game.configPath}");
-                    foreach (var profile in game.Profiles)
+                    if (game.Profiles != null)
                     {
-                        Console.WriteLine($"  {profile.title}: {profile.profilePath}");
+                        foreach (var profile in game.Profiles)
+                        {
+                            Console.WriteLine($"  {profile.Title}: ");
+                            foreach (var configFile in profile.ConfigFiles)
+                            {
+                                Console.WriteLine($"    {configFile.SourceFile} : {configFile.DestinationFile}");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("  No profiles found.");
                     }
                     Console.WriteLine();
                 }

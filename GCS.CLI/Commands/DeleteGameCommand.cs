@@ -3,22 +3,21 @@ using GCS.Core;
 
 namespace GCS.CLI
 {
-    public class DeleteCommand
+    public class DeleteGameCommand
     {
         private readonly IGameDataManager _gameManager;
-        public DeleteCommand(IGameDataManager gameManager)
+        public DeleteGameCommand(IGameDataManager gameManager)
         {
             _gameManager = gameManager;
         }
 
-        [Command ("delete", Description = "Deletes a game.")]
-        public async Task delete
+        [Command("game", Description = "Deletes a game.")]
+        public void DeleteGame
         (
-            [Option('t', Description = "The title of the game")] string title
+            [Argument(Description = "The title of the game")] string title
         )
         {
             _gameManager.DeleteGameData(title);
         }
-
     }
 }

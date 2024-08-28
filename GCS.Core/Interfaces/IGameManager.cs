@@ -4,8 +4,13 @@ namespace GCS.Core
     {
         GameData LoadGameData();
         void SaveGameData(GameData gameData);
-        void AddGameData(string title, string configPath, List<Profile> profiles);
+        Game? GetGame(string title);
+        Profile? GetProfile(string title, string gameTitle);
+        void AddGameData(string title, List<Profile>? profiles = null);
+        void AddProfile(string title, string gameTitle, List<ConfigFile> configFiles);
         void DeleteGameData(string title);
-        void EditGameData(string oldTitle, string newTitle, string newConfigPath, List<Profile> newProfiles);
+        void DeleteProfile(string title, string gameTitle);
+        void EditGameData(string oldTitle, string newTitle);
+        void EditProfile(string oldTitle, string gameTitle, Profile profile);
     }
 }

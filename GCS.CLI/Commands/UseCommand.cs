@@ -11,11 +11,11 @@ namespace GCS.CLI
             _gameManager = gameManager;
         }
 
-        [Command ("use", Description = "Copy a profile to the game's config path.")]
-        public async Task use
+        [Command("use", Description = "Copy a profile to the game's config path.")]
+        public void use
         (
-            [Option('t', Description = "The title of the game")] string title,
-            [Option('p', Description = "The title of the profile")] string profile,
+            [Argument(Description = "The title of the game")] string title,
+            [Argument(Description = "The title of the profile")] string profile,
             [Option('v', Description = "variable to be found and replaced in the profile, used in the format \"variable:value\"")] List<string>? variable
         )
         {
@@ -27,10 +27,10 @@ namespace GCS.CLI
 
                 if (selectedGame != null)
                 {
-                    var selectedProfile = selectedGame.Profiles.FirstOrDefault(p => p.title.Equals(profile, StringComparison.OrdinalIgnoreCase));
+                    var selectedProfile = selectedGame.Profiles.FirstOrDefault(p => p.Title.Equals(profile, StringComparison.OrdinalIgnoreCase));
                     if (selectedProfile != null)
                     {
-                        ProfileHelper.HandleProfile(selectedProfile.profilePath, selectedGame.configPath, variable);
+                        ProfileHelper.HandleProfile(selectedProfile.ConfigFiles, variable);
                     }
 
                     else
