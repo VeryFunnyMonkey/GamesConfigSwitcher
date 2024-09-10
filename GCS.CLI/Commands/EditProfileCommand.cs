@@ -28,6 +28,12 @@ namespace GCS.CLI
                 return;
             }
 
+            if (source == null || destination == null)
+            {
+                Console.WriteLine("Source and destination must be updated together. Please provide both options.");
+                return;
+            }
+
             var configFiles = new List<ConfigFile>();
             if (source != null & destination != null)
             {
@@ -60,6 +66,7 @@ namespace GCS.CLI
                     }
                 }
             }
+
             else
             {
                 configFiles = null;
