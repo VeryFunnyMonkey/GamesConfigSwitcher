@@ -47,7 +47,7 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal --configuration Release
     - name: Publish single-file executable
-      run: dotnet publish GCS.CLI -r ${{ matrix.runtime }} -c Release /p:PublishSingleFile=true --self-contained --output ./output/${{ matrix.runtime }}
+      run: dotnet publish GCS.CLI -r ${{ matrix.runtime }} -c Release /p:PublishSingleFile=true --self-contained --output ./output/${{ matrix.runtime }} /p:InformationalVersion=${{ matrix.runtime }}
 
     - name: Determine file extension
       id: file_ext
