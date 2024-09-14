@@ -29,5 +29,12 @@ namespace GCS.CLI
             Console.WriteLine(message);
             _logger.LogWarning(message);
         }
+
+        public void LogDebug(string message)
+        {
+            throw new NotImplementedException();
+            //this will eventually log to a log file when implemented.
+            //_logger.LogDebug(message);
+        }
     }
 }
