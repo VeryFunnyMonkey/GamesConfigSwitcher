@@ -1,0 +1,4 @@
+<map id="FilePair" name="FilePair">
+<area shape="rect" id="Node000001" title="Represents a pair of source and destination file paths." alt="" coords="5,5,75,31"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="90,12,101,18,92,24,75,25,75,20,91,19,96,18,88,17"/>
+</map>

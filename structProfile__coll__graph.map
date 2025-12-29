@@ -1,0 +1,7 @@
+<map id="Profile" name="Profile">
+<area shape="rect" id="Node000001" title="Represents a specific Game Profile." alt="" coords="9,93,71,119"/>
+<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="86,96,94,100,98,106,89,115,72,117,72,111,87,110,93,106,91,104,84,101"/>
+<area shape="rect" id="Node000002" href="$structFilePair.html" title="Represents a pair of source and destination file paths." alt="" coords="5,5,75,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="43,45,43,93,37,93,37,45"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="90,9,98,12,101,18,93,27,75,29,75,23,91,22,96,18,94,16,88,14"/>
+</map>
