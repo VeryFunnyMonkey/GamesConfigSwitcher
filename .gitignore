@@ -20,6 +20,10 @@ gcs.ini
 # Created by mkstemp() in ops.c
 gcs_temp_*
 
+# Doxygen artifacts
+docs/
+*.db
+
 # --- OS & Editor Files ---
 .DS_Store
 Thumbs.db

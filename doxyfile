@@ -1,0 +1,22 @@
+# Basic Project Info
+PROJECT_NAME           = "Game Config Switcher"
+PROJECT_NUMBER         = "2.0"
+PROJECT_BRIEF          = "A zero-dependency C CLI for managing game config files."
+
+# Input/Output
+# '.' means the current folder (root)
+INPUT                  = . 
+# Look inside the folders (src, include)
+RECURSIVE              = YES
+# Where to save the docs (Action expects this to be 'docs')
+OUTPUT_DIRECTORY       = docs
+
+# Readme as Main Page
+USE_MDFILE_AS_MAINPAGE = README.md
+
+# C-Specific Optimizations
+OPTIMIZE_OUTPUT_FOR_C  = YES
+EXTRACT_ALL            = YES
+
+# Disable LaTeX/PDF (Saves build time)
+GENERATE_LATEX         = NO
