@@ -22,6 +22,8 @@ gcs_temp_*
 
 # Doxygen artifacts
 docs/
+html/
+latex/
 *.db
 
 # --- OS & Editor Files ---

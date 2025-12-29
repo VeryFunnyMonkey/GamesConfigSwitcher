@@ -33,4 +33,9 @@ $(OBJ_DIR):
 clean:
 	rm -rf $(OBJ_DIR) $(TARGET)
 
-.PHONY: all clean
+# Documentation
+# Run doxygen to generate HTML/LaTeX
+doc:
+	doxygen doxyfile
+
+.PHONY: all clean doc
