@@ -1,6 +1,3 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
 name: Build & Test
 
 on:
@@ -11,18 +8,42 @@ on:
 
 jobs:
   build:
-
-    runs-on: windows-latest
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
     - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+
+    # --- Windows Setup ---
+    # Installs MSYS2 to provide GCC and POSIX tools (sh, make) on Windows
+    - name: Setup MSYS2 (Windows)
+      if: runner.os == 'Windows'
+      uses: msys2/setup-msys2@v2
       with:
-        dotnet-version: 8.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+        msystem: UCRT64
+        update: true
+        install: git base-devel mingw-w64-ucrt-x64-gcc
+
+    # --- Compilation ---
+    - name: Build (Unix)
+      if: runner.os != 'Windows'
+      run: make
+
+    - name: Build (Windows)
+      if: runner.os == 'Windows'
+      shell: msys2 {0}
+      run: make
+
+    # --- Testing ---
+    # Runs the Bash integration script. On Windows, standard shell: bash 
+    # uses Git Bash, which is sufficient to execute the test script 
+    # and call the .exe built by MSYS2.
+    - name: Run Integration Tests
+      shell: bash
+      run: |
+        chmod +x tests/test.sh
+        ./tests/test.sh

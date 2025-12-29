@@ -1,4 +1,4 @@
-name: Create Release
+name: Release
 
 on:
   push:
@@ -9,62 +9,54 @@ permissions:
   contents: write
 
 jobs:
-  once:
-    name: Create GitHub release
-    runs-on: ubuntu-latest
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-    steps:
-      - name: Create a release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: true
-          prerelease: true
-
-  build:
-    name: Create cross-platform release build, tag and upload binaries
-    needs: once
+  build-and-release:
+    name: Release for ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        runtime: [win-x64, win-arm64, linux-x64, linux-arm64, osx-x64, osx-arm64]
+        include:
+          - os: ubuntu-latest
+            artifact_name: gcs
+            asset_name: gcs-linux-x64
+          - os: macos-latest
+            artifact_name: gcs
+            asset_name: gcs-macos-arm64
+          - os: windows-latest
+            artifact_name: gcs.exe
+            asset_name: gcs-windows-x64.exe
+
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore --configuration Release
-    - name: Test
-      run: dotnet test --no-build --verbosity normal --configuration Release
-    - name: Publish single-file executable
-      run: dotnet publish GCS.CLI -r ${{ matrix.runtime }} -c Release /p:PublishSingleFile=true --self-contained --output ./output/${{ matrix.runtime }} /p:InformationalVersion=${{ matrix.runtime }}${{github.ref_name}}
+      - uses: actions/checkout@v4
 
-    - name: Determine file extension
-      id: file_ext
-      run: |
-        if [[ "${{ matrix.runtime }}" == "win-"* ]]; then
-          echo "file_ext=.exe" >> $GITHUB_ENV
-        else
-          echo "file_ext=" >> $GITHUB_ENV
-        fi
+      # --- Windows Setup ---
+      - name: Setup MSYS2 (Windows)
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: git base-devel mingw-w64-ucrt-x64-gcc
 
-    - name: Upload Release Asset
-      id: upload-release-asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.once.outputs.upload_url }}
-        asset_path: ./output/${{ matrix.runtime }}/gcs${{ env.file_ext }}
-        asset_name: gcs-${{ matrix.runtime }}${{ env.file_ext }}
-        asset_content_type: application/octet-stream
+      # --- Compilation ---
+      - name: Compile (Unix)
+        if: runner.os != 'Windows'
+        run: make
+
+      - name: Compile (Windows)
+        if: runner.os == 'Windows'
+        shell: msys2 {0}
+        run: make
+
+      # --- Packaging ---
+      # Rename the raw binary to the final asset name
+      - name: Rename Artifact
+        shell: bash
+        run: |
+          mv ${{ matrix.artifact_name }} ${{ matrix.asset_name }}
+
+      # --- Uploading ---
+      - name: Create Release & Upload
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: ${{ matrix.asset_name }}
