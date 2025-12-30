@@ -6,7 +6,7 @@ var indexSectionsWithContent =
   3: "adeflmpst",
   4: "dfgnps",
   5: "fp",
-  6: "_cm",
+  6: "_cgm",
   7: "cgs"
 };
 
