@@ -11,15 +11,15 @@
  * @brief Prints the usage help message.
  */
 void print_usage() {
-    printf("Game Config Switcher (GCS)\n");
+    printf("Game Config Switcher (GCS) v%s\n", GCS_VERSION);
     printf("Usage:\n");
-    printf("  list\n");
-    printf("  add <Game> <Profile> -s <Src> -d <Dst>\n");
-    printf("  use <Game> <Profile> [-v k:v ...]\n");
-    printf("  useall <Profile> [-v k:v ...]\n");
-    printf("  delete <Game> <Profile>\n");
-    printf("  edit game <OldName> <NewName>\n");
-    printf("  edit profile <Game> <Profile> [-n <NewName>] [-s <Src> -d <Dst>]\n");
+    printf("  list (l, ls)\n");
+    printf("  add (a) <Game> <Profile> -s <Src> -d <Dst>\n");
+    printf("  use (u) <Game> <Profile> [-v k:v ...]\n");
+    printf("  useall (ua) <Profile> [-v k:v ...]\n");
+    printf("  delete (d, rm) <Game> <Profile>\n");
+    printf("  edit (e) game <OldName> <NewName>\n");
+    printf("  edit (e) profile <Game> <Profile> [-n <NewName>] [-s <Src> -d <Dst>]\n");
 }
 
 int main(int argc, char *argv[]) {
@@ -30,13 +30,19 @@ int main(int argc, char *argv[]) {
 
     char *cmd = argv[1];
 
+    /* --- VERSION COMMAND --- */
+    if (strcmp(cmd, "version") == 0 || strcmp(cmd, "v") == 0) {
+        printf("Game Config Switcher (GCS) version %s\n", GCS_VERSION);
+        return 0;
+    }
+
     /* --- LIST COMMAND --- */
-    if (strcmp(cmd, "list") == 0) {
+    if (strcmp(cmd, "list") == 0 || strcmp(cmd, "l") == 0 || strcmp(cmd, "ls") == 0) {
         list_profiles();
     }
     
     /* --- ADD COMMAND --- */
-    else if (strcmp(cmd, "add") == 0) {
+    else if (strcmp(cmd, "add") == 0 || strcmp(cmd, "a") == 0) {
         if (argc < 8) {
             printf("Usage: add <Game> <Profile> -s <Src> -d <Dst>\n");
             return 1;
@@ -59,7 +65,7 @@ int main(int argc, char *argv[]) {
     }
     
     /* --- DELETE COMMAND --- */
-    else if (strcmp(cmd, "delete") == 0) {
+    else if (strcmp(cmd, "delete") == 0 || strcmp(cmd, "d") == 0 || strcmp(cmd, "rm") == 0) {
         if (argc < 4) {
             printf("Usage: delete <Game> <Profile>\n");
             return 1;
@@ -68,7 +74,7 @@ int main(int argc, char *argv[]) {
     }
 
     /* --- EDIT COMMAND --- */
-    else if (strcmp(cmd, "edit") == 0) {
+    else if (strcmp(cmd, "edit") == 0 || strcmp(cmd, "e") == 0) {
         if (argc < 3) {
             print_usage(); 
             return 1;
@@ -114,7 +120,7 @@ int main(int argc, char *argv[]) {
     }
     
     /* --- USE COMMAND --- */
-    else if (strcmp(cmd, "use") == 0) {
+    else if (strcmp(cmd, "use") == 0 || strcmp(cmd, "u") == 0) {
         if (argc < 4) {
             printf("Usage: use <Game> <Profile> [-v k:v]\n");
             return 1;
@@ -149,7 +155,7 @@ int main(int argc, char *argv[]) {
     }
 
     /* --- USEALL COMMAND --- */
-    else if (strcmp(cmd, "useall") == 0) {
+    else if (strcmp(cmd, "useall") == 0 || strcmp(cmd, "ua") == 0) {
         if (argc < 3) {
             printf("Usage: useall <Profile> [-v k:v ...]\n");
             return 1;

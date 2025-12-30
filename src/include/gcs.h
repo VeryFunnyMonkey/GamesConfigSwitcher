@@ -19,6 +19,9 @@
 #include <unistd.h>
 #include <errno.h>
 
+/** Current version of Game Config Switcher. */
+#define GCS_VERSION "2.0.1"
+
 /** Maximum length for a line in the config file. */
 #define MAX_LINE 1024
 
