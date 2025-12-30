@@ -23,7 +23,8 @@
 #define GCS_VERSION "2.0.1"
 
 /** Maximum length for a line in the config file. */
-#define MAX_LINE 1024
+#define MAX_LINE 4096
+#define MAX_BUF  (MAX_LINE * 2)
 
 /** Default name of the configuration file. */
 #define CONFIG_FILE "gcs.ini"
