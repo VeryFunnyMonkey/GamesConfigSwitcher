@@ -198,4 +198,9 @@ Doxygen Documentation is available at:
 
 To generate the documentation locally:
 ```bash
+make doc
+```
+Or
+```bash
 doxygen Doxyfile
+```
