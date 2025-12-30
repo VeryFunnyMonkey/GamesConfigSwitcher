@@ -20,7 +20,7 @@
 #include <errno.h>
 
 /** Current version of Game Config Switcher. */
-#define GCS_VERSION "2.0.1"
+#define GCS_VERSION "2.0.2"
 
 /** Maximum length for a line in the config file. */
 #define MAX_LINE 4096
