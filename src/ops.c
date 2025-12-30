@@ -6,6 +6,32 @@
 #include "include/gcs.h"
 
 void perform_copy(const char *src, const char *dst, int var_count, char **vars) {
+    if (var_count == 0) {
+        FILE *fsrc = fopen(src, "rb");
+        if (!fsrc) {
+            fprintf(stderr, "  [ERROR] Source file not found: %s\n", src);
+            return;
+        }
+
+        FILE *fout = fopen(dst, "wb");
+        if (!fout) {
+            fprintf(stderr, "  [ERROR] Failed to open destination: %s\n", dst);
+            fclose(fsrc);
+            return;
+        }
+
+        char buffer[BUFSIZ];
+        size_t bytes;
+        while ((bytes = fread(buffer, 1, sizeof(buffer), fsrc)) > 0) {
+            fwrite(buffer, 1, bytes, fout);
+        }
+
+        fclose(fsrc);
+        fclose(fout);
+        printf("  [OK] Direct copy to: %s\n", dst);
+        return;
+    }
+
     FILE *fsrc = fopen(src, "r");
     if (!fsrc) {
         fprintf(stderr, "  [ERROR] Source file not found: %s\n", src);
@@ -23,32 +49,27 @@ void perform_copy(const char *src, const char *dst, int var_count, char **vars) 
     FILE *ftemp = fdopen(fd, "w");
 
     char line[MAX_LINE];
-    // Process line by line
     while (fgets(line, sizeof(line), fsrc)) {
         char buffer[MAX_LINE * 2]; // Double size buffer to handle expansion
         buffer[0] = '\0';
         char *cursor = line;
         
         while (*cursor) {
-            // Search for variable start tag "${"
             char *start = strstr(cursor, "${");
             if (start) {
-                // Copy text before the variable
                 strncat(buffer, cursor, start - cursor);
                 
-                // Find closing tag "}"
                 char *end = strchr(start, '}');
                 if (end) {
-                    // Extract variable name
                     int var_len = end - (start + 2);
                     char var_name[128];
-                    strncpy(var_name, start + 2, var_len);
-                    var_name[var_len] = '\0';
+                    if (var_len < 128) {
+                        strncpy(var_name, start + 2, var_len);
+                        var_name[var_len] = '\0';
+                    }
                     
-                    // Look up variable value in provided arguments
                     int replaced = 0;
                     for (int i = 0; i < var_count; i++) {
-                        // vars[i] format is "key:value"
                         char *v_copy = strdup(vars[i]);
                         char *key = strtok(v_copy, ":");
                         char *val = strtok(NULL, ":");
@@ -92,14 +113,14 @@ void perform_copy(const char *src, const char *dst, int var_count, char **vars) 
     if (fout && fin) {
         char ch;
         while ((ch = fgetc(fin)) != EOF) fputc(ch, fout);
-        printf("  [OK] Copied to: %s\n", dst);
+        printf("  [OK] Processed copy to: %s\n", dst);
     } else {
         fprintf(stderr, "  [ERROR] Failed writing to: %s\n", dst);
     }
     
     if (fin) fclose(fin);
     if (fout) fclose(fout);
-    remove(temp_path); // Cleanup
+    remove(temp_path); // Clean up temporary file
 }
 
 void execute_profile(Profile *p, int var_count, char **vars) {
