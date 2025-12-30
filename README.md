@@ -16,6 +16,7 @@ It supports variable substitution, allowing you to dynamically inject values (li
   - [Listing & Deleting](#listing--deleting)
   - [Variable Substitution](#variable-substitution)
 - [Configuration File](#configuration-file)
+- [Documentation](#documentation)
 
 ## Features
 - **Zero Dependencies:** Written in standard POSIX C. No heavy runtimes (.NET/Java) required.
@@ -187,4 +188,14 @@ dst=/home/user/games/skyrim/prefs.ini
 
 ## Todo
 - [ ] Add support for dry-run (preview mode).
+
 - [ ] Add backup functionality before overwriting destination files.
+
+## Documentation
+
+Doxygen Documentation is available at:
+[https://veryfunnymonkey.github.io/GamesConfigSwitcher/](https://veryfunnymonkey.github.io/GamesConfigSwitcher/)
+
+To generate the documentation locally:
+```bash
+doxygen Doxyfile
