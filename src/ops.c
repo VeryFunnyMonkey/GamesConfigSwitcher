@@ -165,6 +165,15 @@ void perform_copy(const char *src, const char *dst, int var_count, char **vars) 
         return;
     }
 
+    // Remove existing destination file if it exists
+    if (file_exists(dst)) {
+        if (remove(dst) != 0) {
+            fprintf(stderr, "[ERROR] Failed to remove old file '%s': %s\n", dst, strerror(errno));
+            remove(temp_dst);
+            return;
+        }
+    }
+
     // Replace destination with temp file
     if (rename(temp_dst, dst) != 0) {
         fprintf(stderr, "[ERROR] Failed to move temp file to destination: %s\n", strerror(errno));

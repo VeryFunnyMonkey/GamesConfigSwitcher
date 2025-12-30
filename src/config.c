@@ -182,11 +182,18 @@ void save_config(Profile *head) {
         return;
     }
 
-    // Atomic replacement
+    // Remove old config if it exists
+    if (file_exists(CONFIG_FILE)) {
+        if (remove(CONFIG_FILE) != 0) {
+            fprintf(stderr, "[ERROR] Failed to remove old config file before update: %s\n", strerror(errno));
+            remove(temp_config);
+            return;
+        }
+    }
+
+    // Move temp file to permanent location
     if (rename(temp_config, CONFIG_FILE) != 0) {
         fprintf(stderr, "[ERROR] Failed to commit config file (rename failed): %s\n", strerror(errno));
-        // On Windows, rename fails if dst exists. Remove it first if strictly necessary, 
-        // though standard POSIX rename implies atomic replacement.
         remove(temp_config);
     }
 }
