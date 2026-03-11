@@ -21,7 +21,7 @@ GUI_OBJ = $(OBJ_DIR)/gui_main.o
 
 # Name of the final executables
 TARGET_CLI = gcs
-TARGET_GUI = gcs_gui
+TARGET_GUI = gcs-gui
 
 # Default target builds both
 all: $(TARGET_CLI) $(TARGET_GUI)
