@@ -16,17 +16,35 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            artifact_name: gcs
-            asset_name: gcs-linux-x64
+            cli_artifact: gcs
+            cli_asset: gcs-linux-x64
+            gui_artifact: gcs-gui
+            gui_asset: gcs-gui-linux-x64
           - os: macos-latest
-            artifact_name: gcs
-            asset_name: gcs-macos-arm64
+            cli_artifact: gcs
+            cli_asset: gcs-macos-arm64
+            gui_artifact: gcs-gui
+            gui_asset: gcs-gui-macos-arm64
           - os: windows-latest
-            artifact_name: gcs.exe
-            asset_name: gcs-windows-x64.exe
+            cli_artifact: gcs.exe
+            cli_asset: gcs-windows-x64.exe
+            gui_artifact: gcs-gui.exe
+            gui_asset: gcs-gui-windows-x64.exe
 
     steps:
       - uses: actions/checkout@v4
+
+      # --- GTK3 Dependencies (Linux) ---
+      - name: Install GTK3 (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev pkg-config
+
+      # --- GTK3 Dependencies (macOS) ---
+      - name: Install GTK3 (macOS)
+        if: runner.os == 'macOS'
+        run: brew install gtk+3 pkg-config
 
       # --- Windows Setup ---
       - name: Setup MSYS2 (Windows)
@@ -35,7 +53,7 @@ jobs:
         with:
           msystem: MINGW64
           update: true
-          install: git base-devel mingw-w64-x86_64-gcc
+          install: git base-devel mingw-w64-x86_64-gcc mingw-w64-x86_64-gtk3 mingw-w64-x86_64-pkgconf
 
       # --- Compilation ---
       - name: Compile (Unix)
@@ -48,15 +66,18 @@ jobs:
         run: make
 
       # --- Packaging ---
-      # Rename the raw binary to the final asset name
-      - name: Rename Artifact
+      # Rename the raw binaries to the final asset names
+      - name: Rename Artifacts
         shell: bash
         run: |
-          mv ${{ matrix.artifact_name }} ${{ matrix.asset_name }}
+          mv ${{ matrix.cli_artifact }} ${{ matrix.cli_asset }}
+          mv ${{ matrix.gui_artifact }} ${{ matrix.gui_asset }}
 
       # --- Uploading ---
       - name: Create Release & Upload
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ${{ matrix.asset_name }}
+          files: |
+            ${{ matrix.cli_asset }}
+            ${{ matrix.gui_asset }}
