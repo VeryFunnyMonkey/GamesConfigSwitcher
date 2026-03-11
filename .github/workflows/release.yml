@@ -100,8 +100,9 @@ jobs:
           # Compile a tiny C wrapper executable to place at the root
           echo '#include <process.h>' > launcher.c
           echo 'int main(int argc, char *argv[]) {' >> launcher.c
+          echo '  (void)argc;' >> launcher.c
           echo '  argv[0] = "bin/gcs.exe";' >> launcher.c
-          echo '  _execv("bin/gcs.exe", argv);' >> launcher.c
+          echo '  _execv("bin/gcs.exe", (const char * const *)argv);' >> launcher.c
           echo '  return 1;' >> launcher.c
           echo '}' >> launcher.c
           gcc launcher.c -o dist/gcs.exe
