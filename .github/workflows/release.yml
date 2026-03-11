@@ -79,10 +79,10 @@ jobs:
         if: runner.os == 'Windows'
         shell: msys2 {0}
         run: |
-          mkdir -p dist/libs
+          mkdir -p dist
           mv ${{ matrix.gui_artifact }} dist/gcs.exe
-          # Grab all MSYS2 MinGW DLLs linked to the executable
-          ldd dist/gcs.exe | grep '\/mingw.*\.dll' -o | xargs -I{} cp {} dist/libs/ || true
+          # Grab all MSYS2 MinGW DLLs linked to the executable and put them next to the .exe
+          ldd dist/gcs.exe | grep '\/mingw.*\.dll' -o | xargs -I{} cp {} dist/ || true
 
       # --- Create Zip Archive (Linux) ---
       - name: Zip GUI Bundle (Linux)
