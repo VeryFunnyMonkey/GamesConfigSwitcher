@@ -165,4 +165,15 @@ void execute_profile(Profile *p, int var_count, char **vars);
  */
 void execute_all_named_profiles(const char *prof_name, int var_count, char **vars);
 
+
+/* src/cli.c */
+
+/**
+ * @brief Evaluates command line arguments and executes standard GCS operations.
+ * @param argc The argument count.
+ * @param argv The argument vector.
+ * @return Integer exit code (0 for success).
+ */
+int run_cli(int argc, char *argv[]);
+
 #endif // GCS_H

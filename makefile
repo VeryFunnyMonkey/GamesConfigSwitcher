@@ -8,7 +8,7 @@ SRC_DIR = src
 OBJ_DIR = obj
 
 # Core logic files shared by both CLI and GUI
-CORE_SRCS = $(SRC_DIR)/config.c $(SRC_DIR)/ops.c $(SRC_DIR)/utils.c
+CORE_SRCS = $(SRC_DIR)/config.c $(SRC_DIR)/ops.c $(SRC_DIR)/utils.c $(SRC_DIR)/cli.c
 CORE_OBJS = $(CORE_SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 # CLI specific files
@@ -21,7 +21,7 @@ GUI_OBJ = $(OBJ_DIR)/gui_main.o
 
 # Name of the final executables
 TARGET_CLI = gcs
-TARGET_GUI = gcs-gui
+TARGET_GUI = gcs_gui
 
 # Default target builds both
 all: $(TARGET_CLI) $(TARGET_GUI)

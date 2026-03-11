@@ -1,8 +1,8 @@
 # Game Config Switcher (GCS)
 
-**Game Config Switcher (GCS)** is a lightweight, zero-dependency CLI tool and native GTK3 GUI written in C. It allows you to easily swap configuration files for games or applications, making it ideal for switching settings between different environments (e.g., "TV Mode" vs. "Monitor Mode" or "Steam Deck" vs. "Desktop").
+Game Config Switcher (GCS) is a C-based tool that comes with both a CLI and a native GTK3 GUI. It lets you swap out config files for games and applications, which is handy if you regularly move between different setups (e.g., Desktop to TV, or PC to Steam Deck). 
 
-It supports variable substitution, allowing you to dynamically inject values (like resolution or refresh rate) into configuration files at runtime. 
+It also handles variable substitution, so you can inject values like resolution or refresh rate into your configs at runtime.
 
 ## Table of Contents
 - [Features](#features)
@@ -14,28 +14,29 @@ It supports variable substitution, allowing you to dynamically inject values (li
 - [Documentation](#documentation)
 
 ## Features
-- **Dual Interfaces:** Use the ultra-fast CLI (`gcs`) for scripting/automation, or the native GTK3 desktop app (`gcs-gui`) for visual management.
-- **Zero Heavy Dependencies:** Written in standard POSIX C. No heavy runtimes (.NET/Java) required.
-- **Multiple Files per Profile:** A single profile can swap out multiple config files simultaneously (e.g., `graphics.ini` AND `controls.ini`).
-- **Variable Substitution:** Define placeholders like `${width}` in your source files and replace them dynamically at runtime.
-- **Global Switching:** Apply a specific profile name (e.g., "TV") across *all* configured games with one click/command.
-- **Portable:** Stores configuration in a simple `gcs.ini` file alongside the binaries.
+- **CLI & GUI:** Use `gcs` for terminal use and scripting, or `gcs-gui` if you prefer a visual interface.
+- **Hybrid GUI Binary:** The `gcs-gui` executable also accepts CLI arguments. If you pass commands to it, it runs headlessly without opening the window.
+- **Low Overhead:** Written in POSIX C. No heavy runtimes (like Electron, .NET, or Java) required.
+- **Multi-file Profiles:** Swap out several files at once under a single profile (e.g., `graphics.ini` and `controls.ini`).
+- **Variables:** Put placeholders like `${width}` in your template files and fill them at runtime.
+- **Global Apply:** Push a profile name (like "TV") to every game in your list with one command.
+- **Simple Storage:** Saves all configurations to a plain text `gcs.ini` file.
 
 ## Project Structure
-The project follows a standard C makefile structure:
 
 ```text
 GamesConfigSwitcher/
 ├── Makefile             # Build automation
 ├── gcs.ini              # Config storage (created on first run)
-├── src/                 # Implementation (.c)
-│   ├── main.c           # CLI entry point
-│   ├── gui_main.c       # GTK3 GUI entry point
-│   ├── config.c         # INI parsing & list management
-│   ├── ops.c            # File copying & variable logic
-│   └── utils.c          # Helper functions
-└── include/             # Headers (.h)
-    └── gcs.h            # Data structures & prototypes
+├── include/             # Headers (.h)
+│   └── gcs.h            # Data structures & prototypes
+└── src/                 # Implementation (.c)
+    ├── main.c           # CLI entry point
+    ├── gui_main.c       # GTK3 GUI entry point
+    ├── cli.c            # Shared command-line logic
+    ├── config.c         # INI parsing & list management
+    ├── ops.c            # File copying & variable logic
+    └── utils.c          # Helper functions
 ```
 
 ## Building
@@ -46,25 +47,22 @@ To build the GUI, you also need the GTK3 development headers and `pkg-config`.
 
 * **Arch Linux:** `sudo pacman -S gtk3 pkgconf base-devel`
 * **Ubuntu/Debian:** `sudo apt install libgtk-3-dev pkg-config build-essential`
-* **macOS:** `brew install gtk+3 pkg-config`
 * **Windows (MSYS2):** `pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-gtk3 mingw-w64-x86_64-pkgconf make`
 
 ### Build Steps
-1.  **Clone the repository:**
+1.  Clone the repository:
     ```bash
     git clone [https://github.com/YourUsername/GamesConfigSwitcher.git](https://github.com/YourUsername/GamesConfigSwitcher.git)
     cd GamesConfigSwitcher
     ```
 
-2.  **Compile:**
-    Run `make` in the root directory.
+2.  Compile:
     ```bash
     make
     ```
-    This will generate two executables: `gcs` (CLI) and `gcs-gui` (GUI).
+    This generates the `gcs` and `gcs-gui` binaries.
 
-3.  **Clean (Optional):**
-    To remove build artifacts:
+3.  Clean build artifacts (optional):
     ```bash
     make clean
     ```
@@ -73,71 +71,58 @@ To build the GUI, you also need the GTK3 development headers and `pkg-config`.
 
 ## Usage (GUI)
 
-Launch the graphical interface by running:
+Launch the app:
 ```bash
 ./gcs-gui
 ```
 
-* **Managing Games & Profiles:** Use the top bar to select your Game and Profile. Click the **Add**, **Edit**, or **Delete** buttons to manage them. Creating a Game will ask for an initial Profile name.
-* **Mapping Files:** The middle pane shows all configuration files attached to the selected profile. Click **Add Pair** to open native file pickers for your Source (template) and Destination (where the game reads from).
-* **Applying Profiles:** Type any needed variables (e.g., `RES:1080p FPS:60`) into the bottom text box and click **Apply Selected Profile** (or press `Enter`). 
-* **Global Apply:** Click **Use All** to apply the currently selected *Profile Name* to every game in your list simultaneously.
+* **Managing Games & Profiles:** Use the top bar to select a Game and Profile. Click **Add**, **Edit**, or **Delete** to modify them. 
+* **Mapping Files:** The middle pane shows the config files for the selected profile. Click **Add Pair** to select your Source (template) and Destination (the live config file).
+* **Applying Profiles:** Enter any variables you need (e.g., `RES:1080p FPS:60`) in the bottom text box and click **Apply Selected Profile** (or hit `Enter`). 
+* **Global Apply:** Click **Use All** to apply the active Profile Name to every game currently tracked by GCS.
 
 ---
 
 ## Usage (CLI)
 
-### Adding Profiles
-Use the `add` command to create a game profile. You specify the Game Name, Profile Name, Source file (your template), and Destination file (where the game reads configs).
+**Note:** The examples below use the `gcs` binary, but you can safely swap it out for `gcs-gui` if that's the only binary you have compiled or deployed. 
 
-**Syntax:**
+### Adding Profiles
+Use the `add` command to create a profile. You'll need the Game Name, Profile Name, Source file, and Destination file.
+
 ```bash
 ./gcs add "Game Name" "Profile Name" -s "./path/to/source" -d "./path/to/dest"
 ```
 
-**Multiple Files per Profile:**
-To add a second config file to the *same* profile, simply run the `add` command again with the same Game and Profile names.
+To attach a second file to the *same* profile, run the command again with the same Game and Profile names:
 
 ```bash
 # Add graphics config
 ./gcs add "Skyrim" "TV" -s "./configs/skyrim_tv_graphics.ini" -d "~/Documents/My Games/Skyrim/SkyrimPrefs.ini"
 
-# Add controls config to the SAME profile
+# Add controls config
 ./gcs add "Skyrim" "TV" -s "./configs/skyrim_controller.ini" -d "~/Documents/My Games/Skyrim/ControlMap.txt"
 ```
 
 ### Using Profiles
-The `use` command copies the source file(s) to the destination path(s) for a specific game.
+The `use` command pushes your source files to the destination paths.
 
-**Syntax:**
-```bash
-./gcs use "Game Name" "Profile Name"
-```
-
-**Example:**
 ```bash
 ./gcs use "Skyrim" "TV"
 ```
 
 ### Global Switch (UseAll)
-The `useall` command attempts to apply a specific profile name to **all** configured games. Games that do not have a profile with that name are skipped.
+The `useall` command applies a specific profile name to **all** your games at once. Games that lack a matching profile name are ignored.
 
-**Syntax:**
 ```bash
-./gcs useall "Profile Name"
-```
-
-**Example:**
-```bash
-# Switches Skyrim, Cyberpunk, and Witcher 3 to "TV" mode simultaneously
+# Switches Skyrim, Cyberpunk, and Witcher 3 to their "TV" profiles
 ./gcs useall "TV"
 ```
 
 ### Editing
-You can rename games or modify profiles using the `edit` command.
+Modify existing entries using the `edit` command.
 
-**1. Rename a Game Title:**
-Updates the game name across all profiles.
+**1. Rename a Game (updates all associated profiles):**
 ```bash
 ./gcs edit game "Skyrim" "The Elder Scrolls V"
 ```
@@ -148,40 +133,38 @@ Updates the game name across all profiles.
 ```
 
 **3. Update Profile Paths:**
-Updates the source and destination paths for an existing profile.
-*Note: This replaces the file list for this profile.*
+*(Note: This replaces the file list for the profile)*
 ```bash
 ./gcs edit profile "Skyrim" "TV" -s "./new_src.ini" -d "./new_dest.ini"
 ```
 
 ### Listing & Deleting
-- **List:** View all configured games, profiles, and their file paths.
+- **List everything:**
   ```bash
   ./gcs list
   ```
 
-- **Delete:** Remove a profile and all its associated file pairings.
+- **Delete a profile and its file mappings:**
   ```bash
   ./gcs delete "Skyrim" "TV"
   ```
 
 ### Variable Substitution
-You can inject values into your config files at runtime using the `-v` flag. This works with both `use` and `useall`.
+Pass values using the `-v` flag to replace variables in your config templates. This works with `use` and `useall`.
 
-1.  **Prepare your source file:** Use `${variableName}` tags.
-    *Source File (`template.ini`):*
+1.  Set up your template file with `${variable}` tags:
     ```ini
     [Display]
     ResolutionWidth=${x}
     ResolutionHeight=${y}
     ```
 
-2.  **Run the command:**
+2.  Run the command with your variables:
     ```bash
     ./gcs use "MyGame" "TV" -v x:3840 -v y:2160
     ```
 
-3.  **Result:** The destination file is written as:
+3.  The destination file will output:
     ```ini
     [Display]
     ResolutionWidth=3840
@@ -189,9 +172,8 @@ You can inject values into your config files at runtime using the `-v` flag. Thi
     ```
 
 ## Configuration File
-GCS uses a plain text INI file named `gcs.ini` to store data. Sections are formatted as `[GameName|ProfileName]`. Both the CLI and GUI read from and write to this single file.
+GCS reads and writes to a plain text INI file named `gcs.ini`. Sections use the `[GameName|ProfileName]` format.
 
-**Example `gcs.ini`:**
 ```ini
 [Skyrim|TV]
 src=./configs/tv_graphics.ini
@@ -205,19 +187,17 @@ dst=/home/user/games/skyrim/prefs.ini
 ```
 
 ## Todo
-- [ ] Add support for dry-run (preview mode).
-- [ ] Add backup functionality before overwriting destination files.
+- [ ] Support dry-run (preview mode).
+- [ ] File backups before overwriting.
 
 ## Documentation
 
-Doxygen Documentation is available at:
-[https://veryfunnymonkey.github.io/GamesConfigSwitcher/](https://veryfunnymonkey.github.io/GamesConfigSwitcher/)
+Doxygen docs are available at:
+https://veryfunnymonkey.github.io/GamesConfigSwitcher/
 
-To generate the documentation locally:
+To build the docs locally:
 ```bash
 make doc
-```
-Or
-```bash
+# or
 doxygen Doxyfile
 ```

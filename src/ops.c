@@ -3,7 +3,7 @@
  * @brief Operations implementation. Handles file copying and variable substitution.
  */
 
-#include "include/gcs.h"
+#include "gcs.h"
 
 /**
  * @brief Safely concatenates source to buffer, checking bounds.

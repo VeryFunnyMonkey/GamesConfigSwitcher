@@ -3,7 +3,7 @@
  * @brief Logic for parsing, modifying, and saving the GCS INI configuration.
  */
 
-#include "include/gcs.h"
+#include "gcs.h"
 
 /**
  * @brief Helper to free a linked list of FilePairs.

@@ -6,7 +6,7 @@
  */
 
 #include <gtk/gtk.h>
-#include "include/gcs.h"
+#include "gcs.h"
 
 /* --- Global UI State --- */
 Profile *g_profiles = NULL;
@@ -646,6 +646,13 @@ static void on_window_closed(GtkWidget *w, gpointer d) {
 /* --- Main Application --- */
 
 int main(int argc, char *argv[]) {
+    // Intercept standard execution if arguments are provided.
+    // We ignore GTK specific flags that start with '-' so they pass through to gtk_init.
+    if (argc > 1 && argv[1][0] != '-') {
+        return run_cli(argc, argv);
+    }
+
+    // --- GUI Fallback Initialization ---
     gtk_init(&argc, &argv);
     g_profiles = load_config();
 
