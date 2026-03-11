@@ -3,7 +3,7 @@
  * @brief Utility functions for string manipulation and file system checks.
  */
 
-#include "include/gcs.h"
+#include "gcs.h"
 
 void trim(char *s) {
     if (!s) return;

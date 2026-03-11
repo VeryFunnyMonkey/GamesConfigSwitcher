@@ -7,8 +7,10 @@ obj/
 # --- Executables ---
 # Linux / macOS
 gcs
+gcs-gui
 # Windows
 gcs.exe
+gcs-gui.exe
 
 # --- Configuration & Data ---
 # Ignore the actual config file (contains local paths)

@@ -16,17 +16,25 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            artifact_name: gcs
-            asset_name: gcs-linux-x64
-          - os: macos-latest
-            artifact_name: gcs
-            asset_name: gcs-macos-arm64
+            cli_artifact: gcs
+            cli_asset: gcs-linux-x64
+            gui_artifact: gcs-gui
+            gui_zip: gcs-gui-linux-x64.zip
           - os: windows-latest
-            artifact_name: gcs.exe
-            asset_name: gcs-windows-x64.exe
+            cli_artifact: gcs.exe
+            cli_asset: gcs-windows-x64.exe
+            gui_artifact: gcs-gui.exe
+            gui_zip: gcs-gui-windows-x64.zip
 
     steps:
       - uses: actions/checkout@v4
+
+      # --- GTK3 Dependencies (Linux) ---
+      - name: Install GTK3 (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev pkg-config
 
       # --- Windows Setup ---
       - name: Setup MSYS2 (Windows)
@@ -35,7 +43,7 @@ jobs:
         with:
           msystem: MINGW64
           update: true
-          install: git base-devel mingw-w64-x86_64-gcc
+          install: git base-devel mingw-w64-x86_64-gcc mingw-w64-x86_64-gtk3 mingw-w64-x86_64-pkgconf
 
       # --- Compilation ---
       - name: Compile (Unix)
@@ -47,16 +55,47 @@ jobs:
         shell: msys2 {0}
         run: make
 
-      # --- Packaging ---
-      # Rename the raw binary to the final asset name
-      - name: Rename Artifact
+      # --- Packaging Pure CLI ---
+      - name: Rename CLI Artifact
+        shell: bash
+        run: mv ${{ matrix.cli_artifact }} ${{ matrix.cli_asset }}
+
+      # --- Packaging GUI & Libs (Linux) ---
+      - name: Bundle GUI Dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p dist/libs
+          mv ${{ matrix.gui_artifact }} dist/gcs
+          # Grab dynamically linked libraries
+          ldd dist/gcs | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -n '{}' dist/libs/ || true
+          # Create a launcher script to tell Linux to use the local libs
+          echo '#!/bin/bash' > dist/run_gcs.sh
+          echo 'DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"' >> dist/run_gcs.sh
+          echo 'LD_LIBRARY_PATH="$DIR/libs" "$DIR/gcs" "$@"' >> dist/run_gcs.sh
+          chmod +x dist/run_gcs.sh
+
+      # --- Packaging GUI & Libs (Windows) ---
+      - name: Bundle GUI Dependencies (Windows)
+        if: runner.os == 'Windows'
+        shell: msys2 {0}
+        run: |
+          mkdir -p dist/libs
+          mv ${{ matrix.gui_artifact }} dist/gcs.exe
+          # Grab all MSYS2 MinGW DLLs linked to the executable
+          ldd dist/gcs.exe | grep '\/mingw.*\.dll' -o | xargs -I{} cp {} dist/libs/ || true
+
+      # --- Create Zip Archive ---
+      - name: Zip GUI Bundle
         shell: bash
         run: |
-          mv ${{ matrix.artifact_name }} ${{ matrix.asset_name }}
+          cd dist
+          zip -r ../${{ matrix.gui_zip }} ./*
 
       # --- Uploading ---
       - name: Create Release & Upload
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ${{ matrix.asset_name }}
+          files: |
+            ${{ matrix.cli_asset }}
+            ${{ matrix.gui_zip }}
