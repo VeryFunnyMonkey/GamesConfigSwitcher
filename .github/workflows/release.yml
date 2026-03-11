@@ -66,8 +66,8 @@ jobs:
         run: |
           mkdir -p dist/libs
           mv ${{ matrix.gui_artifact }} dist/gcs
-          # Grab dynamically linked libraries
-          ldd dist/gcs | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -n '{}' dist/libs/ || true
+          # Grab dynamically linked libraries, but strictly EXCLUDE core system libraries
+          ldd dist/gcs | grep "=> /" | awk '{print $3}' | grep -vE "libc\.so|libm\.so|libpthread\.so|libdl\.so|librt\.so|libgcc_s\.so|libstdc\+\+\.so|ld-linux" | xargs -I '{}' cp -n '{}' dist/libs/ || true
           # Create a launcher script to tell Linux to use the local libs
           echo '#!/bin/bash' > dist/run_gcs.sh
           echo 'DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"' >> dist/run_gcs.sh
@@ -84,12 +84,20 @@ jobs:
           # Grab all MSYS2 MinGW DLLs linked to the executable
           ldd dist/gcs.exe | grep '\/mingw.*\.dll' -o | xargs -I{} cp {} dist/libs/ || true
 
-      # --- Create Zip Archive ---
-      - name: Zip GUI Bundle
+      # --- Create Zip Archive (Linux) ---
+      - name: Zip GUI Bundle (Linux)
+        if: runner.os == 'Linux'
         shell: bash
         run: |
           cd dist
           zip -r ../${{ matrix.gui_zip }} ./*
+
+      # --- Create Zip Archive (Windows) ---
+      - name: Zip GUI Bundle (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Compress-Archive -Path dist\* -DestinationPath ${{ matrix.gui_zip }}
 
       # --- Uploading ---
       - name: Create Release & Upload
