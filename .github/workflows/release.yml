@@ -79,22 +79,32 @@ jobs:
         if: runner.os == 'Windows'
         shell: msys2 {0}
         run: |
-          mkdir -p dist
-          mv ${{ matrix.gui_artifact }} dist/gcs.exe
-          
-          # Grab all MSYS2 MinGW DLLs linked to the executable and put them next to the .exe
-          ldd dist/gcs.exe | grep '\/mingw.*\.dll' -o | xargs -I{} cp {} dist/ || true
-
-          # Grab required GTK Data Assets (Schemas and Icons)
+          # Create the required UNIX-style folder structure inside dist
+          mkdir -p dist/bin
           mkdir -p dist/share/glib-2.0/schemas
           mkdir -p dist/share/icons
+          mkdir -p dist/lib
           
-          # Fixes the GLib-GIO-ERROR crash
-          cp /mingw64/share/glib-2.0/schemas/gschemas.compiled dist/share/glib-2.0/schemas/
+          # Move executable into bin/
+          mv ${{ matrix.gui_artifact }} dist/bin/gcs.exe
           
-          # Fixes the missing icon warnings in the file picker
+          # Grab all MSYS2 MinGW DLLs linked to the executable and put them in bin/
+          ldd dist/bin/gcs.exe | grep '\/mingw.*\.dll' -o | xargs -I{} cp {} dist/bin/ || true
+
+          # Grab required GTK Data Assets
+          cp /mingw64/share/glib-2.0/schemas/gschemas.compiled dist/share/glib-2.0/schemas/ || true
           cp -r /mingw64/share/icons/Adwaita dist/share/icons/ || true
           cp -r /mingw64/share/icons/hicolor dist/share/icons/ || true
+          cp -r /mingw64/lib/gdk-pixbuf-2.0 dist/lib/ || true
+          
+          # Compile a tiny C wrapper executable to place at the root
+          echo '#include <process.h>' > launcher.c
+          echo 'int main(int argc, char *argv[]) {' >> launcher.c
+          echo '  argv[0] = "bin/gcs.exe";' >> launcher.c
+          echo '  _execv("bin/gcs.exe", argv);' >> launcher.c
+          echo '  return 1;' >> launcher.c
+          echo '}' >> launcher.c
+          gcc launcher.c -o dist/gcs.exe
 
       # --- Create Zip Archive (Linux) ---
       - name: Zip GUI Bundle (Linux)
