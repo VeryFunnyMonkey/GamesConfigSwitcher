@@ -73,112 +73,120 @@ $(function() {
   <div class="headertitle"><div class="title">Game Config Switcher (GCS) </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md_README"></a> <b>Game Config Switcher (GCS)</b> is a lightweight, zero-dependency CLI tool written in C. It allows you to easily swap configuration files for games or applications, making it ideal for switching settings between different environments (e.g., "TV Mode" vs. "Monitor Mode" or "Steam Deck" vs. "Desktop").</p>
-<p>It supports variable substitution, allowing you to dynamically inject values (like resolution or refresh rate) into configuration files at runtime.</p>
+<div class="textblock"><p><a class="anchor" id="md_README"></a> Game Config Switcher (GCS) is a C-based tool that comes with both a CLI and a native GTK3 GUI. It lets you swap out config files for games and applications, which is handy if you regularly move between different setups (e.g., Desktop to TV, or PC to Steam Deck).</p>
+<p>It also handles variable substitution, so you can inject values like resolution or refresh rate into your configs at runtime.</p>
 <h1><a class="anchor" id="autotoc_md1"></a>
 Table of Contents</h1>
 <ul>
 <li>Features</li>
 <li>Project Structure</li>
 <li>Building</li>
-<li>Usage<ul>
-<li>Adding Profiles</li>
-<li>Using Profiles</li>
-<li>Global Switch (UseAll)</li>
-<li>Editing</li>
-<li>Listing &amp; Deleting</li>
-<li>Variable Substitution</li>
-</ul>
-</li>
+<li>Usage (GUI)</li>
+<li>Usage (CLI)</li>
 <li>Configuration File</li>
 <li>Documentation</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md2"></a>
 Features</h1>
 <ul>
-<li><b>Zero Dependencies:</b> Written in standard POSIX C. No heavy runtimes (.NET/Java) required.</li>
-<li><b>Multiple Files per <a class="el" href="structProfile.html" title="Represents a specific Game Profile.">Profile</a>:</b> A single profile can swap out multiple config files simultaneously (e.g., <code>graphics.ini</code> AND <code>controls.ini</code>).</li>
-<li><b>Variable Substitution:</b> Define placeholders like <code>${width}</code> in your source files and replace them via CLI arguments.</li>
-<li><b>Global Switching:</b> Apply a specific profile name (e.g., "TV") across <em>all</em> configured games with one command.</li>
-<li><b>Portable:</b> Stores configuration in a simple <code>gcs.ini</code> file alongside the binary.</li>
+<li><b>CLI &amp; GUI:</b> Use <code>gcs</code> for terminal use and scripting, or <code>gcs-gui</code> if you prefer a visual interface.</li>
+<li><b>Hybrid GUI Binary:</b> The <code>gcs-gui</code> executable also accepts CLI arguments. If you pass commands to it, it runs headlessly without opening the window.</li>
+<li><b>Low Overhead:</b> Written in POSIX C. No heavy runtimes (like Electron, .NET, or Java) required.</li>
+<li><b>Multi-file Profiles:</b> Swap out several files at once under a single profile (e.g., <code>graphics.ini</code> and <code>controls.ini</code>).</li>
+<li><b>Variables:</b> Put placeholders like <code>${width}</code> in your template files and fill them at runtime.</li>
+<li><b>Global Apply:</b> Push a profile name (like "TV") to every game in your list with one command.</li>
+<li><b>Simple Storage:</b> Saves all configurations to a plain text <code>gcs.ini</code> file.</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md3"></a>
 Project Structure</h1>
-<p>The project follows a standard C makefile structure:</p>
 <div class="fragment"><div class="line">GamesConfigSwitcher/</div>
 <div class="line">├── Makefile             # Build automation</div>
 <div class="line">├── gcs.ini              # Config storage (created on first run)</div>
-<div class="line">├── src/                 # Implementation (.c)</div>
-<div class="line">│   ├── main.c           # CLI entry point</div>
-<div class="line">│   ├── config.c         # INI parsing &amp; list management</div>
-<div class="line">│   ├── ops.c            # File copying &amp; variable logic</div>
-<div class="line">│   └── utils.c          # Helper functions</div>
-<div class="line">└── include/             # Headers (.h)</div>
-<div class="line">    └── gcs.h            # Data structures &amp; prototypes</div>
+<div class="line">├── include/             # Headers (.h)</div>
+<div class="line">│   └── gcs.h            # Data structures &amp; prototypes</div>
+<div class="line">└── src/                 # Implementation (.c)</div>
+<div class="line">    ├── main.c           # CLI entry point</div>
+<div class="line">    ├── gui_main.c       # GTK3 GUI entry point</div>
+<div class="line">    ├── cli.c            # Shared command-line logic</div>
+<div class="line">    ├── config.c         # INI parsing &amp; list management</div>
+<div class="line">    ├── ops.c            # File copying &amp; variable logic</div>
+<div class="line">    └── utils.c          # Helper functions</div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md4"></a>
 Building</h1>
 <h2><a class="anchor" id="autotoc_md5"></a>
 Prerequisites</h2>
+<p>To build the CLI, you only need GCC/Clang and Make. To build the GUI, you also need the GTK3 development headers and <code>pkg-config</code>.</p>
 <ul>
-<li>GCC (GNU Compiler Collection) or Clang</li>
-<li>Make</li>
+<li><b>Arch Linux:</b> <code>sudo pacman -S gtk3 pkgconf base-devel</code></li>
+<li><b>Ubuntu/Debian:</b> <code>sudo apt install libgtk-3-dev pkg-config build-essential</code></li>
+<li><b>Windows (MSYS2):</b> <code>pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-gtk3 mingw-w64-x86_64-pkgconf make</code></li>
 </ul>
 <h2><a class="anchor" id="autotoc_md6"></a>
 Build Steps</h2>
 <ol type="1">
-<li><b>Clone the repository:</b> <code>bash git clone [<a href="https://github.com/YourUsername/GamesConfigSwitcher.git">https://github.com/YourUsername/GamesConfigSwitcher.git</a>](<a href="https://github.com/YourUsername/GamesConfigSwitcher.git">https://github.com/YourUsername/GamesConfigSwitcher.git</a>) cd GamesConfigSwitcher </code></li>
-<li><b>Compile:</b> Run <code>make</code> in the root directory. <code>bash make </code> This will create the <code>gcs</code> binary.</li>
-<li><b>Clean (Optional):</b> To remove build artifacts: <code>bash make clean </code></li>
+<li>Clone the repository: <code>bash git clone [<a href="https://github.com/YourUsername/GamesConfigSwitcher.git">https://github.com/YourUsername/GamesConfigSwitcher.git</a>](<a href="https://github.com/YourUsername/GamesConfigSwitcher.git">https://github.com/YourUsername/GamesConfigSwitcher.git</a>) cd GamesConfigSwitcher </code></li>
+<li>Compile: <code>bash make </code> This generates the <code>gcs</code> and <code>gcs-gui</code> binaries.</li>
+<li>Clean build artifacts (optional): <code>bash make clean </code></li>
 </ol>
-<h1><a class="anchor" id="autotoc_md7"></a>
-Usage</h1>
-<h2><a class="anchor" id="autotoc_md8"></a>
+<hr  />
+<h1><a class="anchor" id="autotoc_md8"></a>
+Usage (GUI)</h1>
+<p>Launch the app: </p><div class="fragment"><div class="line">./gcs-gui</div>
+</div><!-- fragment --><ul>
+<li><b>Managing Games &amp; Profiles:</b> Use the top bar to select a Game and <a class="el" href="structProfile.html" title="Represents a specific Game Profile.">Profile</a>. Click <b>Add</b>, <b>Edit</b>, or <b>Delete</b> to modify them.</li>
+<li><b>Mapping Files:</b> The middle pane shows the config files for the selected profile. Click <b>Add Pair</b> to select your Source (template) and Destination (the live config file).</li>
+<li><b>Applying Profiles:</b> Enter any variables you need (e.g., <code>RES:1080p FPS:60</code>) in the bottom text box and click <b>Apply Selected <a class="el" href="structProfile.html" title="Represents a specific Game Profile.">Profile</a></b> (or hit <code>Enter</code>).</li>
+<li><b>Global Apply:</b> Click <b>Use All</b> to apply the active <a class="el" href="structProfile.html" title="Represents a specific Game Profile.">Profile</a> Name to every game currently tracked by GCS.</li>
+</ul>
+<hr  />
+<h1><a class="anchor" id="autotoc_md10"></a>
+Usage (CLI)</h1>
+<p><b>Note:</b> The examples below use the <code>gcs</code> binary, but you can safely swap it out for <code>gcs-gui</code> if that's the only binary you have compiled or deployed.</p>
+<h2><a class="anchor" id="autotoc_md11"></a>
 Adding Profiles</h2>
-<p>Use the <code>add</code> command to create a game profile. You specify the Game Name, <a class="el" href="structProfile.html" title="Represents a specific Game Profile.">Profile</a> Name, Source file (your template), and Destination file (where the game reads configs).</p>
-<p><b>Syntax:</b> </p><div class="fragment"><div class="line">./gcs add &quot;Game Name&quot; &quot;Profile Name&quot; -s &quot;./path/to/source&quot; -d &quot;./path/to/dest&quot;</div>
-</div><!-- fragment --><p><b>Multiple Files per <a class="el" href="structProfile.html" title="Represents a specific Game Profile.">Profile</a>:</b> To add a second config file to the <em>same</em> profile, simply run the <code>add</code> command again with the same Game and <a class="el" href="structProfile.html" title="Represents a specific Game Profile.">Profile</a> names.</p>
+<p>Use the <code>add</code> command to create a profile. You'll need the Game Name, <a class="el" href="structProfile.html" title="Represents a specific Game Profile.">Profile</a> Name, Source file, and Destination file.</p>
+<div class="fragment"><div class="line">./gcs add &quot;Game Name&quot; &quot;Profile Name&quot; -s &quot;./path/to/source&quot; -d &quot;./path/to/dest&quot;</div>
+</div><!-- fragment --><p>To attach a second file to the <em>same</em> profile, run the command again with the same Game and <a class="el" href="structProfile.html" title="Represents a specific Game Profile.">Profile</a> names:</p>
 <div class="fragment"><div class="line"># Add graphics config</div>
 <div class="line">./gcs add &quot;Skyrim&quot; &quot;TV&quot; -s &quot;./configs/skyrim_tv_graphics.ini&quot; -d &quot;~/Documents/My Games/Skyrim/SkyrimPrefs.ini&quot;</div>
 <div class="line"> </div>
-<div class="line"># Add controls config to the SAME profile</div>
+<div class="line"># Add controls config</div>
 <div class="line">./gcs add &quot;Skyrim&quot; &quot;TV&quot; -s &quot;./configs/skyrim_controller.ini&quot; -d &quot;~/Documents/My Games/Skyrim/ControlMap.txt&quot;</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md9"></a>
-Using Profiles</h2>
-<p>The <code>use</code> command copies the source file(s) to the destination path(s) for a specific game.</p>
-<p><b>Syntax:</b> </p><div class="fragment"><div class="line">./gcs use &quot;Game Name&quot; &quot;Profile Name&quot;</div>
-</div><!-- fragment --><p><b>Example:</b> </p><div class="fragment"><div class="line">./gcs use &quot;Skyrim&quot; &quot;TV&quot;</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md10"></a>
-Global Switch (UseAll)</h2>
-<p>The <code>useall</code> command attempts to apply a specific profile name to <b>all</b> configured games. Games that do not have a profile with that name are skipped.</p>
-<p><b>Syntax:</b> </p><div class="fragment"><div class="line">./gcs useall &quot;Profile Name&quot;</div>
-</div><!-- fragment --><p><b>Example:</b> </p><div class="fragment"><div class="line"># Switches Skyrim, Cyberpunk, and Witcher 3 to &quot;TV&quot; mode simultaneously</div>
-<div class="line">./gcs useall &quot;TV&quot;</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md11"></a>
-Editing</h2>
-<p>You can rename games or modify profiles using the <code>edit</code> command.</p>
-<p><b>1. Rename a Game Title:</b> Updates the game name across all profiles. </p><div class="fragment"><div class="line">./gcs edit game &quot;Skyrim&quot; &quot;The Elder Scrolls V&quot;</div>
-</div><!-- fragment --><p><b>2. Rename a <a class="el" href="structProfile.html" title="Represents a specific Game Profile.">Profile</a>:</b> </p><div class="fragment"><div class="line">./gcs edit profile &quot;Skyrim&quot; &quot;TV&quot; -n &quot;LivingRoom&quot;</div>
-</div><!-- fragment --><p><b>3. Update <a class="el" href="structProfile.html" title="Represents a specific Game Profile.">Profile</a> Paths:</b> Updates the source and destination paths for an existing profile. <em>Note: This replaces the file list for this profile.</em> </p><div class="fragment"><div class="line">./gcs edit profile &quot;Skyrim&quot; &quot;TV&quot; -s &quot;./new_src.ini&quot; -d &quot;./new_dest.ini&quot;</div>
 </div><!-- fragment --><h2><a class="anchor" id="autotoc_md12"></a>
+Using Profiles</h2>
+<p>The <code>use</code> command pushes your source files to the destination paths.</p>
+<div class="fragment"><div class="line">./gcs use &quot;Skyrim&quot; &quot;TV&quot;</div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md13"></a>
+Global Switch (UseAll)</h2>
+<p>The <code>useall</code> command applies a specific profile name to <b>all</b> your games at once. Games that lack a matching profile name are ignored.</p>
+<div class="fragment"><div class="line"># Switches Skyrim, Cyberpunk, and Witcher 3 to their &quot;TV&quot; profiles</div>
+<div class="line">./gcs useall &quot;TV&quot;</div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md14"></a>
+Editing</h2>
+<p>Modify existing entries using the <code>edit</code> command.</p>
+<p><b>1. Rename a Game (updates all associated profiles):</b> </p><div class="fragment"><div class="line">./gcs edit game &quot;Skyrim&quot; &quot;The Elder Scrolls V&quot;</div>
+</div><!-- fragment --><p><b>2. Rename a <a class="el" href="structProfile.html" title="Represents a specific Game Profile.">Profile</a>:</b> </p><div class="fragment"><div class="line">./gcs edit profile &quot;Skyrim&quot; &quot;TV&quot; -n &quot;LivingRoom&quot;</div>
+</div><!-- fragment --><p><b>3. Update <a class="el" href="structProfile.html" title="Represents a specific Game Profile.">Profile</a> Paths:</b> *(Note: This replaces the file list for the profile)* </p><div class="fragment"><div class="line">./gcs edit profile &quot;Skyrim&quot; &quot;TV&quot; -s &quot;./new_src.ini&quot; -d &quot;./new_dest.ini&quot;</div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md15"></a>
 Listing &amp; Deleting</h2>
 <ul>
-<li><b>List:</b> View all configured games, profiles, and their file paths. <div class="fragment"><div class="line">./gcs list</div>
+<li><b>List everything:</b> <div class="fragment"><div class="line">./gcs list</div>
 </div><!-- fragment --></li>
-<li><b>Delete:</b> Remove a profile and all its associated file pairings. <div class="fragment"><div class="line">./gcs delete &quot;Skyrim&quot; &quot;TV&quot;</div>
+<li><b>Delete a profile and its file mappings:</b> <div class="fragment"><div class="line">./gcs delete &quot;Skyrim&quot; &quot;TV&quot;</div>
 </div><!-- fragment --></li>
 </ul>
-<h2><a class="anchor" id="autotoc_md13"></a>
+<h2><a class="anchor" id="autotoc_md16"></a>
 Variable Substitution</h2>
-<p>You can inject values into your config files at runtime using the <code>-v</code> flag. This works with both <code>use</code> and <code>useall</code>.</p>
+<p>Pass values using the <code>-v</code> flag to replace variables in your config templates. This works with <code>use</code> and <code>useall</code>.</p>
 <ol type="1">
-<li><b>Prepare your source file:</b> Use <code>${variableName}</code> tags. *Source File (<code>template.ini</code>):* <code>ini [Display] ResolutionWidth=${x} ResolutionHeight=${y} </code></li>
-<li><b>Run the command:</b> <code>bash ./gcs use "MyGame" "TV" -v x:3840 -v y:2160 </code></li>
-<li><b>Result:</b> The destination file is written as: <code>ini [Display] ResolutionWidth=3840 ResolutionHeight=2160 </code></li>
+<li>Set up your template file with <code>${variable}</code> tags: <code>ini [Display] ResolutionWidth=${x} ResolutionHeight=${y} </code></li>
+<li>Run the command with your variables: <code>bash ./gcs use "MyGame" "TV" -v x:3840 -v y:2160 </code></li>
+<li>The destination file will output: <code>ini [Display] ResolutionWidth=3840 ResolutionHeight=2160 </code></li>
 </ol>
-<h1><a class="anchor" id="autotoc_md14"></a>
+<h1><a class="anchor" id="autotoc_md17"></a>
 Configuration File</h1>
-<p>GCS uses a plain text INI file named <code>gcs.ini</code> to store data. Sections are formatted as <code>[GameName|ProfileName]</code>.</p>
-<p><b>Example <code>gcs.ini</code>:</b> </p><div class="fragment"><div class="line">[Skyrim|TV]</div>
+<p>GCS reads and writes to a plain text INI file named <code>gcs.ini</code>. Sections use the <code>[GameName|ProfileName]</code> format.</p>
+<div class="fragment"><div class="line">[Skyrim|TV]</div>
 <div class="line">src=./configs/tv_graphics.ini</div>
 <div class="line">dst=/home/user/games/skyrim/prefs.ini</div>
 <div class="line">src=./configs/controller.ini</div>
@@ -187,17 +195,18 @@ Configuration File</h1>
 <div class="line">[Skyrim|Monitor]</div>
 <div class="line">src=./configs/monitor_graphics.ini</div>
 <div class="line">dst=/home/user/games/skyrim/prefs.ini</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md15"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md18"></a>
 Todo</h1>
 <ul>
-<li>[ ] Add support for dry-run (preview mode).</li>
-<li>[ ] Add backup functionality before overwriting destination files.</li>
+<li>[ ] Support dry-run (preview mode).</li>
+<li>[ ] File backups before overwriting.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md16"></a>
+<h1><a class="anchor" id="autotoc_md19"></a>
 Documentation</h1>
-<p>Doxygen Documentation is available at: <a href="https://veryfunnymonkey.github.io/GamesConfigSwitcher/">https://veryfunnymonkey.github.io/GamesConfigSwitcher/</a></p>
-<p>To generate the documentation locally: </p><div class="fragment"><div class="line">make doc</div>
-</div><!-- fragment --><p> Or </p><div class="fragment"><div class="line">doxygen Doxyfile</div>
+<p>Doxygen docs are available at: <a href="https://veryfunnymonkey.github.io/GamesConfigSwitcher/">https://veryfunnymonkey.github.io/GamesConfigSwitcher/</a></p>
+<p>To build the docs locally: </p><div class="fragment"><div class="line">make doc</div>
+<div class="line"># or</div>
+<div class="line">doxygen Doxyfile</div>
 </div><!-- fragment --> </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->

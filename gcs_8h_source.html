@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Game Config Switcher: src/include/gcs.h Source File</title>
+<title>Game Config Switcher: include/gcs.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -75,7 +75,7 @@ $(document).ready(function() { init_codefold(0); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_b0856f6b0d80ccb263b2f415c91f9e17.html">include</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -160,7 +160,12 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span> </div>
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span><span class="keywordtype">void</span> <a class="code hl_function" href="gcs_8h.html#a5b085920a7b7eef9d02692a28b89284e">execute_all_named_profiles</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *prof_name, <span class="keywordtype">int</span> var_count, <span class="keywordtype">char</span> **vars);</div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span><span class="preprocessor">#endif </span><span class="comment">// GCS_H</span></div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span> </div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span><span class="comment">/* src/cli.c */</span></div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span> </div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span><span class="keywordtype">int</span> <a class="code hl_function" href="gcs_8h.html#a83fba85b580202385641bce1014ed93a">run_cli</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> *argv[]);</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span> </div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span><span class="preprocessor">#endif </span><span class="comment">// GCS_H</span></div>
 <div class="ttc" id="agcs_8h_html_a0864f825628874d6ffb73922e3138c0c"><div class="ttname"><a href="gcs_8h.html#a0864f825628874d6ffb73922e3138c0c">trim</a></div><div class="ttdeci">void trim(char *s)</div><div class="ttdoc">Trims leading and trailing whitespace from a string.</div><div class="ttdef"><b>Definition</b> utils.c:8</div></div>
 <div class="ttc" id="agcs_8h_html_a2ac4e9f3c51fcfb604fc1472d9ddd258"><div class="ttname"><a href="gcs_8h.html#a2ac4e9f3c51fcfb604fc1472d9ddd258">load_config</a></div><div class="ttdeci">Profile * load_config(void)</div><div class="ttdoc">Loads the configuration from disk into memory.</div><div class="ttdef"><b>Definition</b> config.c:35</div></div>
 <div class="ttc" id="agcs_8h_html_a44f12a46cdd9e1e54ca4c06ac7383b37"><div class="ttname"><a href="gcs_8h.html#a44f12a46cdd9e1e54ca4c06ac7383b37">execute_profile</a></div><div class="ttdeci">void execute_profile(Profile *p, int var_count, char **vars)</div><div class="ttdoc">Executes all file operations for a specific profile.</div><div class="ttdef"><b>Definition</b> ops.c:186</div></div>
@@ -171,6 +176,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="agcs_8h_html_a67749be23b3636a038729bda427d77ea"><div class="ttname"><a href="gcs_8h.html#a67749be23b3636a038729bda427d77ea">add_profile_entry</a></div><div class="ttdeci">void add_profile_entry(const char *game, const char *prof, const char *src, const char *dst)</div><div class="ttdoc">Adds a new file pair to a profile. Creates the profile if it doesn't exist.</div><div class="ttdef"><b>Definition</b> config.c:201</div></div>
 <div class="ttc" id="agcs_8h_html_a7141f577b3a422f72e2a07e80bbe5cf4"><div class="ttname"><a href="gcs_8h.html#a7141f577b3a422f72e2a07e80bbe5cf4">edit_profile</a></div><div class="ttdeci">void edit_profile(const char *game, const char *old_prof, const char *new_prof, const char *new_src, const char *new_dst)</div><div class="ttdoc">Edits a profile's name and/or its file paths.</div><div class="ttdef"><b>Definition</b> config.c:311</div></div>
 <div class="ttc" id="agcs_8h_html_a73d3c9805e25c7c7dffcb44b9c22fce4"><div class="ttname"><a href="gcs_8h.html#a73d3c9805e25c7c7dffcb44b9c22fce4">delete_profile</a></div><div class="ttdeci">void delete_profile(const char *game, const char *prof)</div><div class="ttdoc">Deletes a specific profile and all its associated file pairs.</div><div class="ttdef"><b>Definition</b> config.c:254</div></div>
+<div class="ttc" id="agcs_8h_html_a83fba85b580202385641bce1014ed93a"><div class="ttname"><a href="gcs_8h.html#a83fba85b580202385641bce1014ed93a">run_cli</a></div><div class="ttdeci">int run_cli(int argc, char *argv[])</div><div class="ttdoc">Evaluates command line arguments and executes standard GCS operations.</div><div class="ttdef"><b>Definition</b> cli.c:28</div></div>
 <div class="ttc" id="agcs_8h_html_a8efe5e418a5a9ae79c3964e4e28b3ee8"><div class="ttname"><a href="gcs_8h.html#a8efe5e418a5a9ae79c3964e4e28b3ee8">edit_game_title</a></div><div class="ttdeci">void edit_game_title(const char *old_game, const char *new_game)</div><div class="ttdoc">Edits the title of a game across all its profiles.</div><div class="ttdef"><b>Definition</b> config.c:288</div></div>
 <div class="ttc" id="agcs_8h_html_abdbf1f39f0d6bcdd748d777b900a2849"><div class="ttname"><a href="gcs_8h.html#abdbf1f39f0d6bcdd748d777b900a2849">strdup_safe</a></div><div class="ttdeci">char * strdup_safe(const char *s)</div><div class="ttdoc">Safely duplicates a string, handling NULL inputs.</div><div class="ttdef"><b>Definition</b> utils.c:29</div></div>
 <div class="ttc" id="agcs_8h_html_ad762b3b143e97c60cd38a3b1350ff65e"><div class="ttname"><a href="gcs_8h.html#ad762b3b143e97c60cd38a3b1350ff65e">free_profiles</a></div><div class="ttdeci">void free_profiles(Profile *head)</div><div class="ttdoc">Frees all memory associated with the profile list.</div><div class="ttdef"><b>Definition</b> config.c:23</div></div>

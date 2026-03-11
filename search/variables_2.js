@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['game_5fname_0',['game_name',['../structProfile.html#a0b0d0383c9a4171863b041b54211bfc5',1,'Profile']]]
+  ['dst_0',['dst',['../structFilePair.html#a9e2adc6d7c005a2d20aca2eb269b8865',1,'FilePair']]]
 ];

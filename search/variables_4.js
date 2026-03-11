@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['profile_5fname_0',['profile_name',['../structProfile.html#afbb14697c81d77e8ad654731f363c9c2',1,'Profile']]]
+  ['files_0',['files',['../structProfile.html#ab8b825afd5a39d00480ac53defe9c9c9',1,'Profile']]]
 ];

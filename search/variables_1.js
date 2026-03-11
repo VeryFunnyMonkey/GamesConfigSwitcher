@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['files_0',['files',['../structProfile.html#ab8b825afd5a39d00480ac53defe9c9c9',1,'Profile']]]
+  ['combo_5fgame_0',['combo_game',['../gui__main_8c.html#a440d40b4a953c6c18b22f8303a3eabb6',1,'gui_main.c']]],
+  ['combo_5fprofile_1',['combo_profile',['../gui__main_8c.html#a45484ffda6c67267903041ed80fcff59',1,'gui_main.c']]]
 ];
