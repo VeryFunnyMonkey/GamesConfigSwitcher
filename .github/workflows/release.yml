@@ -81,8 +81,20 @@ jobs:
         run: |
           mkdir -p dist
           mv ${{ matrix.gui_artifact }} dist/gcs.exe
+          
           # Grab all MSYS2 MinGW DLLs linked to the executable and put them next to the .exe
           ldd dist/gcs.exe | grep '\/mingw.*\.dll' -o | xargs -I{} cp {} dist/ || true
+
+          # Grab required GTK Data Assets (Schemas and Icons)
+          mkdir -p dist/share/glib-2.0/schemas
+          mkdir -p dist/share/icons
+          
+          # Fixes the GLib-GIO-ERROR crash
+          cp /mingw64/share/glib-2.0/schemas/gschemas.compiled dist/share/glib-2.0/schemas/
+          
+          # Fixes the missing icon warnings in the file picker
+          cp -r /mingw64/share/icons/Adwaita dist/share/icons/ || true
+          cp -r /mingw64/share/icons/hicolor dist/share/icons/ || true
 
       # --- Create Zip Archive (Linux) ---
       - name: Zip GUI Bundle (Linux)
